@@ -1,21 +1,22 @@
-package mw
+package initialize
 
 import (
 	"context"
 	"net/http"
 	"time"
 
+	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/common/utils"
 	"github.com/edufriendchen/tiktok-demo/cmd/api/biz/rpc"
 	"github.com/edufriendchen/tiktok-demo/kitex_gen/user"
 	"github.com/edufriendchen/tiktok-demo/pkg/consts"
 	"github.com/edufriendchen/tiktok-demo/pkg/errno"
-	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/common/utils"
 	"github.com/hertz-contrib/jwt"
 )
 
 var JwtMiddleware *jwt.HertzJWTMiddleware
 
+// InitJWT to init JWT
 func InitJWT() {
 	JwtMiddleware, _ = jwt.New(&jwt.HertzJWTMiddleware{
 		Key:           []byte(consts.SecretKey),

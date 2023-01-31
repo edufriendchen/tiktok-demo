@@ -35,10 +35,12 @@ func (s *UserServiceImpl) CreateUser(ctx context.Context, req *user.CreateUserRe
 func (s *UserServiceImpl) CheckUser(ctx context.Context, req *user.CheckUserRequest) (resp *user.CheckUserResponse, err error) {
 	resp = new(user.CheckUserResponse)
 	if err = req.IsValid(); err != nil {
+		resp = &user.CheckUserResponse{StatusCode: errno.ParamErr.ErrCode, StatusMsg: &errno.ParamErr.ErrMsg}
 		return resp, err
 	}
 	userid, err := service.NewCheckUserService(ctx).Login(ctx, global.Neo4jSession, req)
 	if err != nil {
+		resp = &user.CheckUserResponse{StatusCode: errno.ServiceErr.ErrCode, StatusMsg: &errno.ServiceErr.ErrMsg}
 		return resp, err
 	}
 	token, err := global.Jwt.CreateToken(jwt.CustomClaims{
@@ -52,12 +54,15 @@ func (s *UserServiceImpl) CheckUser(ctx context.Context, req *user.CheckUserRequ
 func (s *UserServiceImpl) GetUser(ctx context.Context, req *user.GetUserRequest) (resp *user.GetUserResponse, err error) {
 	resp = new(user.GetUserResponse)
 	if err = req.IsValid(); err != nil {
+		resp = &user.GetUserResponse{StatusCode: errno.ParamErr.ErrCode, StatusMsg: &errno.ParamErr.ErrMsg}
 		return resp, err
 	}
-	user, err := service.NewGetUserService(ctx).GetUser(ctx, global.Neo4jSession, req)
+	userInfo, err := service.NewGetUserService(ctx).GetUser(ctx, global.Neo4jSession, req)
 	if err != nil {
+		resp = &user.GetUserResponse{StatusCode: errno.ParamErr.ErrCode, StatusMsg: &errno.ParamErr.ErrMsg}
 		return resp, err
 	}
-	resp.User = user
+	resp = &user.GetUserResponse{StatusCode: errno.Success.ErrCode, StatusMsg: &errno.Success.ErrMsg}
+	resp.User = userInfo
 	return resp, nil
 }

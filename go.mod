@@ -20,7 +20,16 @@ require (
 	golang.org/x/crypto v0.5.0
 )
 
-require github.com/mattn/go-isatty v0.0.17 // indirect
+require (
+	github.com/go-sql-driver/mysql v1.7.0 // indirect
+	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/jinzhu/now v1.1.5 // indirect
+	github.com/kitex-contrib/obs-opentelemetry/logging/logrus v0.0.0-20221109071748-a433b0b57972 // indirect
+	github.com/mattn/go-isatty v0.0.17 // indirect
+	gorm.io/driver/mysql v1.4.5 // indirect
+	gorm.io/gorm v1.24.3 // indirect
+	gorm.io/plugin/opentelemetry v0.1.0 // indirect
+)
 
 require (
 	github.com/aliyun/alibaba-cloud-sdk-go v1.61.18 // indirect
@@ -60,7 +69,7 @@ require (
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
-	go.opentelemetry.io/contrib/instrumentation/runtime v0.32.0 // indirect
+	go.opentelemetry.io/contrib/instrumentation/runtime v0.33.0 // indirect
 	go.opentelemetry.io/contrib/propagators/b3 v1.9.0 // indirect
 	go.opentelemetry.io/contrib/propagators/ot v1.9.0 // indirect
 	go.opentelemetry.io/otel v1.9.0 // indirect

@@ -1,6 +1,8 @@
 package initialize
 
 import (
+	"fmt"
+
 	"github.com/cloudwego/kitex/pkg/registry"
 	nacos "github.com/kitex-contrib/registry-nacos/registry"
 	"github.com/nacos-group/nacos-sdk-go/clients"
@@ -31,7 +33,7 @@ func InitNacos() (registry.Registry, error) {
 		},
 	)
 	if err != nil {
-		return nil, err
+		fmt.Println("Nacos Init error!")
 	}
 	return nacos.NewNacosRegistry(cli), nil
 }

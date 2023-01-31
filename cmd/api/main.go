@@ -8,57 +8,29 @@ import (
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/kitex/pkg/utils"
 	"github.com/edufriendchen/httpvlog"
-	mw "github.com/edufriendchen/tiktok-demo/cmd/api/biz/mv"
+	"github.com/edufriendchen/tiktok-demo/cmd/api/biz/initialize"
 	"github.com/edufriendchen/tiktok-demo/cmd/api/biz/rpc"
 	"github.com/edufriendchen/tiktok-demo/pkg/consts"
-	hertzlogrus "github.com/hertz-contrib/obs-opentelemetry/logging/logrus"
-	"github.com/hertz-contrib/registry/nacos"
-	"github.com/nacos-group/nacos-sdk-go/clients"
-	"github.com/nacos-group/nacos-sdk-go/common/constant"
-	"github.com/nacos-group/nacos-sdk-go/vo"
+	"github.com/hertz-contrib/obs-opentelemetry/logging/logrus"
 )
 
 func Init() {
-
 	rpc.Init()
-	mw.InitJWT()
-	hlog.SetLogger(hertzlogrus.NewLogger())
+	initialize.InitJWT()
+	hlog.SetLogger(logrus.NewLogger())
 	hlog.SetLevel(hlog.LevelInfo)
 }
 
 func main() {
 	Init()
-	sc := []constant.ServerConfig{
-		*constant.NewServerConfig("127.0.0.1", 8848),
-	}
-
-	cc := constant.ClientConfig{
-		NamespaceId:         "public",
-		TimeoutMs:           5000,
-		NotLoadCacheAtStart: true,
-		LogDir:              "/tmp/nacos/log",
-		CacheDir:            "/tmp/nacos/cache",
-		LogLevel:            "info",
-	}
-
-	cli, err := clients.NewNamingClient(
-		vo.NacosClientParam{
-			ClientConfig:  &cc,
-			ServerConfigs: sc,
-		},
-	)
-	if err != nil {
-		panic(err)
-	}
-	addr := "127.0.0.1:1060"
+	r, _ := initialize.InitNacos()
 	//tracer, cfg := tracing.NewServerTracer()
-
 	h := server.New(
-		server.WithHostPorts(":1060"),
+		server.WithHostPorts(consts.ApiServiceAddr),
 		server.WithHandleMethodNotAllowed(true),
-		server.WithRegistry(nacos.NewNacosRegistry(cli), &registry.Info{
+		server.WithRegistry(r, &registry.Info{
 			ServiceName: consts.ApiServiceName,
-			Addr:        utils.NewNetAddr("tcp", addr),
+			Addr:        utils.NewNetAddr(consts.TCP, consts.ApiServiceAddr),
 			Weight:      10,
 			Tags:        nil,
 		}),
