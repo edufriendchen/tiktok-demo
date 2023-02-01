@@ -4,9 +4,9 @@ package relationservice
 
 import (
 	"context"
-	relation "github.com/edufriendchen/tiktok-demo/kitex_gen/relation"
 	client "github.com/cloudwego/kitex/client"
 	kitex "github.com/cloudwego/kitex/pkg/serviceinfo"
+	relation "github.com/edufriendchen/tiktok-demo/kitex_gen/relation"
 )
 
 func serviceInfo() *kitex.ServiceInfo {
@@ -19,10 +19,10 @@ func NewServiceInfo() *kitex.ServiceInfo {
 	serviceName := "RelationService"
 	handlerType := (*relation.RelationService)(nil)
 	methods := map[string]kitex.MethodInfo{
-		"ActionRelation":  kitex.NewMethodInfo(actionRelationHandler, newRelationServiceActionRelationArgs, newRelationServiceActionRelationResult, false),
-		"GetFollowList":   kitex.NewMethodInfo(getFollowListHandler, newRelationServiceGetFollowListArgs, newRelationServiceGetFollowListResult, false),
-		"GetFollowerList": kitex.NewMethodInfo(getFollowerListHandler, newRelationServiceGetFollowerListArgs, newRelationServiceGetFollowerListResult, false),
-		"GetFriendList":   kitex.NewMethodInfo(getFriendListHandler, newRelationServiceGetFriendListArgs, newRelationServiceGetFriendListResult, false),
+		"ActionRelation":   kitex.NewMethodInfo(actionRelationHandler, newRelationServiceActionRelationArgs, newRelationServiceActionRelationResult, false),
+		"MGetFollowList":   kitex.NewMethodInfo(mGetFollowListHandler, newRelationServiceMGetFollowListArgs, newRelationServiceMGetFollowListResult, false),
+		"MGetFollowerList": kitex.NewMethodInfo(mGetFollowerListHandler, newRelationServiceMGetFollowerListArgs, newRelationServiceMGetFollowerListResult, false),
+		"MGetFriendList":   kitex.NewMethodInfo(mGetFriendListHandler, newRelationServiceMGetFriendListArgs, newRelationServiceMGetFriendListResult, false),
 	}
 	extra := map[string]interface{}{
 		"PackageName": "relation",
@@ -56,58 +56,58 @@ func newRelationServiceActionRelationResult() interface{} {
 	return relation.NewRelationServiceActionRelationResult()
 }
 
-func getFollowListHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*relation.RelationServiceGetFollowListArgs)
-	realResult := result.(*relation.RelationServiceGetFollowListResult)
-	success, err := handler.(relation.RelationService).GetFollowList(ctx, realArg.Req)
+func mGetFollowListHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*relation.RelationServiceMGetFollowListArgs)
+	realResult := result.(*relation.RelationServiceMGetFollowListResult)
+	success, err := handler.(relation.RelationService).MGetFollowList(ctx, realArg.Req)
 	if err != nil {
 		return err
 	}
 	realResult.Success = success
 	return nil
 }
-func newRelationServiceGetFollowListArgs() interface{} {
-	return relation.NewRelationServiceGetFollowListArgs()
+func newRelationServiceMGetFollowListArgs() interface{} {
+	return relation.NewRelationServiceMGetFollowListArgs()
 }
 
-func newRelationServiceGetFollowListResult() interface{} {
-	return relation.NewRelationServiceGetFollowListResult()
+func newRelationServiceMGetFollowListResult() interface{} {
+	return relation.NewRelationServiceMGetFollowListResult()
 }
 
-func getFollowerListHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*relation.RelationServiceGetFollowerListArgs)
-	realResult := result.(*relation.RelationServiceGetFollowerListResult)
-	success, err := handler.(relation.RelationService).GetFollowerList(ctx, realArg.Req)
+func mGetFollowerListHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*relation.RelationServiceMGetFollowerListArgs)
+	realResult := result.(*relation.RelationServiceMGetFollowerListResult)
+	success, err := handler.(relation.RelationService).MGetFollowerList(ctx, realArg.Req)
 	if err != nil {
 		return err
 	}
 	realResult.Success = success
 	return nil
 }
-func newRelationServiceGetFollowerListArgs() interface{} {
-	return relation.NewRelationServiceGetFollowerListArgs()
+func newRelationServiceMGetFollowerListArgs() interface{} {
+	return relation.NewRelationServiceMGetFollowerListArgs()
 }
 
-func newRelationServiceGetFollowerListResult() interface{} {
-	return relation.NewRelationServiceGetFollowerListResult()
+func newRelationServiceMGetFollowerListResult() interface{} {
+	return relation.NewRelationServiceMGetFollowerListResult()
 }
 
-func getFriendListHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*relation.RelationServiceGetFriendListArgs)
-	realResult := result.(*relation.RelationServiceGetFriendListResult)
-	success, err := handler.(relation.RelationService).GetFriendList(ctx, realArg.Req)
+func mGetFriendListHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*relation.RelationServiceMGetFriendListArgs)
+	realResult := result.(*relation.RelationServiceMGetFriendListResult)
+	success, err := handler.(relation.RelationService).MGetFriendList(ctx, realArg.Req)
 	if err != nil {
 		return err
 	}
 	realResult.Success = success
 	return nil
 }
-func newRelationServiceGetFriendListArgs() interface{} {
-	return relation.NewRelationServiceGetFriendListArgs()
+func newRelationServiceMGetFriendListArgs() interface{} {
+	return relation.NewRelationServiceMGetFriendListArgs()
 }
 
-func newRelationServiceGetFriendListResult() interface{} {
-	return relation.NewRelationServiceGetFriendListResult()
+func newRelationServiceMGetFriendListResult() interface{} {
+	return relation.NewRelationServiceMGetFriendListResult()
 }
 
 type kClient struct {
@@ -130,31 +130,31 @@ func (p *kClient) ActionRelation(ctx context.Context, req *relation.ActionReques
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) GetFollowList(ctx context.Context, req *relation.FollowRequest) (r *relation.FollowResponse, err error) {
-	var _args relation.RelationServiceGetFollowListArgs
+func (p *kClient) MGetFollowList(ctx context.Context, req *relation.FollowRequest) (r *relation.FollowResponse, err error) {
+	var _args relation.RelationServiceMGetFollowListArgs
 	_args.Req = req
-	var _result relation.RelationServiceGetFollowListResult
-	if err = p.c.Call(ctx, "GetFollowList", &_args, &_result); err != nil {
+	var _result relation.RelationServiceMGetFollowListResult
+	if err = p.c.Call(ctx, "MGetFollowList", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) GetFollowerList(ctx context.Context, req *relation.FollowerRequest) (r *relation.FollowerResponse, err error) {
-	var _args relation.RelationServiceGetFollowerListArgs
+func (p *kClient) MGetFollowerList(ctx context.Context, req *relation.FollowerRequest) (r *relation.FollowerResponse, err error) {
+	var _args relation.RelationServiceMGetFollowerListArgs
 	_args.Req = req
-	var _result relation.RelationServiceGetFollowerListResult
-	if err = p.c.Call(ctx, "GetFollowerList", &_args, &_result); err != nil {
+	var _result relation.RelationServiceMGetFollowerListResult
+	if err = p.c.Call(ctx, "MGetFollowerList", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) GetFriendList(ctx context.Context, req *relation.FriendRequest) (r *relation.FriendResponse, err error) {
-	var _args relation.RelationServiceGetFriendListArgs
+func (p *kClient) MGetFriendList(ctx context.Context, req *relation.FriendRequest) (r *relation.FriendResponse, err error) {
+	var _args relation.RelationServiceMGetFriendListArgs
 	_args.Req = req
-	var _result relation.RelationServiceGetFriendListResult
-	if err = p.c.Call(ctx, "GetFriendList", &_args, &_result); err != nil {
+	var _result relation.RelationServiceMGetFriendListResult
+	if err = p.c.Call(ctx, "MGetFriendList", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

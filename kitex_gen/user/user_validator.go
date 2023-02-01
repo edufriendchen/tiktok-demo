@@ -60,10 +60,10 @@ func (p *CheckUserRequest) IsValid() error {
 func (p *CheckUserResponse) IsValid() error {
 	return nil
 }
-func (p *GetUserRequest) IsValid() error {
+func (p *MGetUserRequest) IsValid() error {
 	return nil
 }
-func (p *GetUserResponse) IsValid() error {
+func (p *MGetUserResponse) IsValid() error {
 	if p.User != nil {
 		if err := p.User.IsValid(); err != nil {
 			return fmt.Errorf("filed User not valid, %w", err)

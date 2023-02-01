@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	Neo4jSession neo4j.SessionWithContext
-	Jwt          *jwt.JWT
-	DB           *gorm.DB
+	Neo4jDriver neo4j.DriverWithContext
+	Jwt         *jwt.JWT
+	DB          *gorm.DB
 )

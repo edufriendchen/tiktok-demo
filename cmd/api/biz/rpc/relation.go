@@ -5,8 +5,8 @@ import (
 
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
-	"github.com/edufriendchen/tiktok-demo/kitex_gen/user"
-	"github.com/edufriendchen/tiktok-demo/kitex_gen/user/userservice"
+	"github.com/edufriendchen/tiktok-demo/kitex_gen/relation"
+	"github.com/edufriendchen/tiktok-demo/kitex_gen/relation/relationservice"
 	"github.com/edufriendchen/tiktok-demo/pkg/consts"
 	"github.com/edufriendchen/tiktok-demo/pkg/errno"
 	"github.com/edufriendchen/tiktok-demo/pkg/initialize"
@@ -15,17 +15,17 @@ import (
 	"github.com/kitex-contrib/registry-nacos/resolver"
 )
 
-var userClient userservice.Client
+var relationClient relationservice.Client
 
-func initUser() {
+func initRelation() {
 	cli, err := initialize.InitNacos()
 	provider.NewOpenTelemetryProvider(
 		provider.WithServiceName(consts.ApiServiceName),
 		provider.WithExportEndpoint(consts.ExportEndpoint),
 		provider.WithInsecure(),
 	)
-	c, err := userservice.NewClient(
-		consts.UserServiceName,
+	c, err := relationservice.NewClient(
+		consts.RelationServiceName,
 		client.WithResolver(resolver.NewNacosResolver(cli)),
 		client.WithMuxConnection(1),
 		client.WithSuite(tracing.NewClientSuite()),
@@ -34,12 +34,12 @@ func initUser() {
 	if err != nil {
 		panic(err)
 	}
-	userClient = c
+	relationClient = c
 }
 
-// CreateUser create user info
-func CreateUser(ctx context.Context, req *user.CreateUserRequest) (*user.CreateUserResponse, error) {
-	resp, err := userClient.CreateUser(ctx, req)
+// ActionRelation
+func ActionRelation(ctx context.Context, req *relation.ActionRequest) (*relation.ActionResponse, error) {
+	resp, err := relationClient.ActionRelation(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -49,9 +49,9 @@ func CreateUser(ctx context.Context, req *user.CreateUserRequest) (*user.CreateU
 	return resp, nil
 }
 
-// CheckUser check user info
-func CheckUse(ctx context.Context, req *user.CheckUserRequest) (*user.CheckUserResponse, error) {
-	resp, err := userClient.CheckUser(ctx, req)
+// MGetFollowList
+func MGetFollowList(ctx context.Context, req *relation.FollowRequest) (*relation.FollowResponse, error) {
+	resp, err := relationClient.MGetFollowList(ctx, req)
 	if err != nil {
 		return resp, err
 	}
@@ -61,9 +61,21 @@ func CheckUse(ctx context.Context, req *user.CheckUserRequest) (*user.CheckUserR
 	return resp, nil
 }
 
-// Login rpc to user service GetUserInfo
-func MGetUserInfo(ctx context.Context, req *user.MGetUserRequest) (*user.MGetUserResponse, error) {
-	resp, err := userClient.MGetUser(ctx, req)
+// MGetFollowerList
+func MGetFollowerList(ctx context.Context, req *relation.FollowerRequest) (*relation.FollowerResponse, error) {
+	resp, err := relationClient.MGetFollowerList(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != 0 {
+		return nil, errno.NewErrNo(resp.StatusCode, *resp.StatusMsg)
+	}
+	return resp, nil
+}
+
+// MGetFriendList
+func MGetFriendList(ctx context.Context, req *relation.FriendRequest) (*relation.FriendResponse, error) {
+	resp, err := relationClient.MGetFriendList(ctx, req)
 	if err != nil {
 		return nil, err
 	}

@@ -27,5 +27,5 @@ struct FavoriteResponse {
 
 service RelationService{
   ActionResponse ActionFavorite(1: ActionRequest req)            // 点赞操作
-  FavoriteResponse GetFavoriteList(1: FavoriteRequest req)       // 获取关注列表
+  FavoriteResponse MGetFavoriteList(1: FavoriteRequest req)       // 获取关注列表
 }

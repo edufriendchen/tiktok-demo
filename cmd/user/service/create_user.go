@@ -13,25 +13,28 @@ import (
 )
 
 type CreateUserService struct {
-	ctx context.Context
+	ctx     context.Context
+	session neo4j.SessionWithContext
 }
 
 // NewCreateUserService new CreateUserService
-func NewCreateUserService(ctx context.Context) *CreateUserService {
-	return &CreateUserService{ctx: ctx}
+func NewCreateUserService(ctx context.Context, driver neo4j.DriverWithContext) *CreateUserService {
+	session := driver.NewSession(ctx, neo4j.SessionConfig{})
+	defer session.Close(ctx)
+	return &CreateUserService{ctx: ctx, session: session}
 }
 
-func (createUserService *CreateUserService) CreateUserNode(ctx context.Context, session neo4j.SessionWithContext, user *user.CreateUserRequest) (userid int64, err error) {
+func (s *CreateUserService) CreateUserNode(user *user.CreateUserRequest) (userid int64, err error) {
 	user.Password = BcryptHash(user.Password)
 	nickname := DefaultNickName()
-	userid, err = neo4j.ExecuteWrite[int64](ctx, session, func(tx neo4j.ManagedTransaction) (userid int64, err error) {
-		result, err := tx.Run(ctx, "MATCH (n:User {username: $username}) RETURN count(*) AS count LIMIT 1", map[string]any{
+	userid, err = neo4j.ExecuteWrite[int64](s.ctx, s.session, func(tx neo4j.ManagedTransaction) (userid int64, err error) {
+		result, err := tx.Run(s.ctx, "MATCH (n:User {username: $username}) RETURN count(*) AS count LIMIT 1", map[string]any{
 			"username": user.Username,
 		})
 		if err != nil {
 			return 0, err
 		}
-		record, err := result.Single(ctx)
+		record, err := result.Single(s.ctx)
 		if err != nil {
 			return 0, err
 		}
@@ -43,17 +46,17 @@ func (createUserService *CreateUserService) CreateUserNode(ctx context.Context, 
 		if op != 0 {
 			return 0, errno.UserAlreadyExistErr
 		}
-		result, err = tx.Run(ctx, "CREATE (n:User { username: $username, password: $password, nickname: $nickname, followCount: $followCount, followerCount: $followerCount }) RETURN n", map[string]any{
-			"username":      user.Username,
-			"password":      user.Password,
-			"nickname":      nickname,
-			"followCount":   0,
-			"followerCount": 0,
+		result, err = tx.Run(s.ctx, "CREATE (n:User { username: $username, password: $password, nickname: $nickname, follow_count: $follow_count, follower_count: $follower_count }) RETURN n", map[string]any{
+			"username":       user.Username,
+			"password":       user.Password,
+			"nickname":       nickname,
+			"follow_count":   0,
+			"follower_count": 0,
 		})
 		if err != nil {
 			return 0, err
 		}
-		record, err = result.Single(ctx)
+		record, err = result.Single(s.ctx)
 		if err != nil {
 			return 0, err
 		}

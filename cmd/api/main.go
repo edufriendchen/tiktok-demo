@@ -8,10 +8,11 @@ import (
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/kitex/pkg/utils"
 	"github.com/edufriendchen/httpvlog"
-	"github.com/edufriendchen/tiktok-demo/cmd/api/biz/initialize"
 	"github.com/edufriendchen/tiktok-demo/cmd/api/biz/rpc"
 	"github.com/edufriendchen/tiktok-demo/pkg/consts"
+	"github.com/edufriendchen/tiktok-demo/pkg/initialize"
 	"github.com/hertz-contrib/obs-opentelemetry/logging/logrus"
+	"github.com/hertz-contrib/registry/nacos"
 )
 
 func Init() {
@@ -23,12 +24,12 @@ func Init() {
 
 func main() {
 	Init()
-	r, _ := initialize.InitNacos()
+	cli, _ := initialize.InitNacos()
 	//tracer, cfg := tracing.NewServerTracer()
 	h := server.New(
 		server.WithHostPorts(consts.ApiServiceAddr),
 		server.WithHandleMethodNotAllowed(true),
-		server.WithRegistry(r, &registry.Info{
+		server.WithRegistry(nacos.NewNacosRegistry(cli), &registry.Info{
 			ServiceName: consts.ApiServiceName,
 			Addr:        utils.NewNetAddr(consts.TCP, consts.ApiServiceAddr),
 			Weight:      10,

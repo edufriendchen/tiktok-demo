@@ -27,5 +27,5 @@ struct FeedResponse {
 
 
 service RelationService{
-    FeedResponse GetFeedList(1: FeedRequest req)       // 获取按投稿时间倒序的视频列表
+    FeedResponse MGetFeedList(1: FeedRequest req)       // 获取按投稿时间倒序的视频列表
 }

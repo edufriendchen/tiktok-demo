@@ -5,8 +5,8 @@ package relation
 import (
 	"context"
 	"fmt"
-	"github.com/edufriendchen/tiktok-demo/kitex_gen/user"
 	"github.com/apache/thrift/lib/go/thrift"
+	"github.com/edufriendchen/tiktok-demo/kitex_gen/user"
 	"strings"
 )
 
@@ -562,7 +562,7 @@ func (p *ActionResponse) Field2DeepEqual(src *string) bool {
 }
 
 type FollowRequest struct {
-	UserId string `thrift:"user_id,1,required" frugal:"1,required,string" json:"user_id"`
+	UserId int64  `thrift:"user_id,1,required" frugal:"1,required,i64" json:"user_id"`
 	Token  string `thrift:"token,2,required" frugal:"2,required,string" json:"token"`
 }
 
@@ -574,14 +574,14 @@ func (p *FollowRequest) InitDefault() {
 	*p = FollowRequest{}
 }
 
-func (p *FollowRequest) GetUserId() (v string) {
+func (p *FollowRequest) GetUserId() (v int64) {
 	return p.UserId
 }
 
 func (p *FollowRequest) GetToken() (v string) {
 	return p.Token
 }
-func (p *FollowRequest) SetUserId(val string) {
+func (p *FollowRequest) SetUserId(val int64) {
 	p.UserId = val
 }
 func (p *FollowRequest) SetToken(val string) {
@@ -615,7 +615,7 @@ func (p *FollowRequest) Read(iprot thrift.TProtocol) (err error) {
 
 		switch fieldId {
 		case 1:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.I64 {
 				if err = p.ReadField1(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -678,7 +678,7 @@ RequiredFieldNotSetError:
 }
 
 func (p *FollowRequest) ReadField1(iprot thrift.TProtocol) error {
-	if v, err := iprot.ReadString(); err != nil {
+	if v, err := iprot.ReadI64(); err != nil {
 		return err
 	} else {
 		p.UserId = v
@@ -729,10 +729,10 @@ WriteStructEndError:
 }
 
 func (p *FollowRequest) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("user_id", thrift.STRING, 1); err != nil {
+	if err = oprot.WriteFieldBegin("user_id", thrift.I64, 1); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.UserId); err != nil {
+	if err := oprot.WriteI64(p.UserId); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -784,9 +784,9 @@ func (p *FollowRequest) DeepEqual(ano *FollowRequest) bool {
 	return true
 }
 
-func (p *FollowRequest) Field1DeepEqual(src string) bool {
+func (p *FollowRequest) Field1DeepEqual(src int64) bool {
 
-	if strings.Compare(p.UserId, src) != 0 {
+	if p.UserId != src {
 		return false
 	}
 	return true
@@ -2292,11 +2292,11 @@ func (p *FriendResponse) Field3DeepEqual(src []*user.User) bool {
 type RelationService interface {
 	ActionRelation(ctx context.Context, req *ActionRequest) (r *ActionResponse, err error)
 
-	GetFollowList(ctx context.Context, req *FollowRequest) (r *FollowResponse, err error)
+	MGetFollowList(ctx context.Context, req *FollowRequest) (r *FollowResponse, err error)
 
-	GetFollowerList(ctx context.Context, req *FollowerRequest) (r *FollowerResponse, err error)
+	MGetFollowerList(ctx context.Context, req *FollowerRequest) (r *FollowerResponse, err error)
 
-	GetFriendList(ctx context.Context, req *FriendRequest) (r *FriendResponse, err error)
+	MGetFriendList(ctx context.Context, req *FriendRequest) (r *FriendResponse, err error)
 }
 
 type RelationServiceClient struct {
@@ -2334,29 +2334,29 @@ func (p *RelationServiceClient) ActionRelation(ctx context.Context, req *ActionR
 	}
 	return _result.GetSuccess(), nil
 }
-func (p *RelationServiceClient) GetFollowList(ctx context.Context, req *FollowRequest) (r *FollowResponse, err error) {
-	var _args RelationServiceGetFollowListArgs
+func (p *RelationServiceClient) MGetFollowList(ctx context.Context, req *FollowRequest) (r *FollowResponse, err error) {
+	var _args RelationServiceMGetFollowListArgs
 	_args.Req = req
-	var _result RelationServiceGetFollowListResult
-	if err = p.Client_().Call(ctx, "GetFollowList", &_args, &_result); err != nil {
+	var _result RelationServiceMGetFollowListResult
+	if err = p.Client_().Call(ctx, "MGetFollowList", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
-func (p *RelationServiceClient) GetFollowerList(ctx context.Context, req *FollowerRequest) (r *FollowerResponse, err error) {
-	var _args RelationServiceGetFollowerListArgs
+func (p *RelationServiceClient) MGetFollowerList(ctx context.Context, req *FollowerRequest) (r *FollowerResponse, err error) {
+	var _args RelationServiceMGetFollowerListArgs
 	_args.Req = req
-	var _result RelationServiceGetFollowerListResult
-	if err = p.Client_().Call(ctx, "GetFollowerList", &_args, &_result); err != nil {
+	var _result RelationServiceMGetFollowerListResult
+	if err = p.Client_().Call(ctx, "MGetFollowerList", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
-func (p *RelationServiceClient) GetFriendList(ctx context.Context, req *FriendRequest) (r *FriendResponse, err error) {
-	var _args RelationServiceGetFriendListArgs
+func (p *RelationServiceClient) MGetFriendList(ctx context.Context, req *FriendRequest) (r *FriendResponse, err error) {
+	var _args RelationServiceMGetFriendListArgs
 	_args.Req = req
-	var _result RelationServiceGetFriendListResult
-	if err = p.Client_().Call(ctx, "GetFriendList", &_args, &_result); err != nil {
+	var _result RelationServiceMGetFriendListResult
+	if err = p.Client_().Call(ctx, "MGetFriendList", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
@@ -2383,9 +2383,9 @@ func (p *RelationServiceProcessor) ProcessorMap() map[string]thrift.TProcessorFu
 func NewRelationServiceProcessor(handler RelationService) *RelationServiceProcessor {
 	self := &RelationServiceProcessor{handler: handler, processorMap: make(map[string]thrift.TProcessorFunction)}
 	self.AddToProcessorMap("ActionRelation", &relationServiceProcessorActionRelation{handler: handler})
-	self.AddToProcessorMap("GetFollowList", &relationServiceProcessorGetFollowList{handler: handler})
-	self.AddToProcessorMap("GetFollowerList", &relationServiceProcessorGetFollowerList{handler: handler})
-	self.AddToProcessorMap("GetFriendList", &relationServiceProcessorGetFriendList{handler: handler})
+	self.AddToProcessorMap("MGetFollowList", &relationServiceProcessorMGetFollowList{handler: handler})
+	self.AddToProcessorMap("MGetFollowerList", &relationServiceProcessorMGetFollowerList{handler: handler})
+	self.AddToProcessorMap("MGetFriendList", &relationServiceProcessorMGetFriendList{handler: handler})
 	return self
 }
 func (p *RelationServiceProcessor) Process(ctx context.Context, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
@@ -2454,16 +2454,16 @@ func (p *relationServiceProcessorActionRelation) Process(ctx context.Context, se
 	return true, err
 }
 
-type relationServiceProcessorGetFollowList struct {
+type relationServiceProcessorMGetFollowList struct {
 	handler RelationService
 }
 
-func (p *relationServiceProcessorGetFollowList) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-	args := RelationServiceGetFollowListArgs{}
+func (p *relationServiceProcessorMGetFollowList) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := RelationServiceMGetFollowListArgs{}
 	if err = args.Read(iprot); err != nil {
 		iprot.ReadMessageEnd()
 		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
-		oprot.WriteMessageBegin("GetFollowList", thrift.EXCEPTION, seqId)
+		oprot.WriteMessageBegin("MGetFollowList", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush(ctx)
@@ -2472,11 +2472,11 @@ func (p *relationServiceProcessorGetFollowList) Process(ctx context.Context, seq
 
 	iprot.ReadMessageEnd()
 	var err2 error
-	result := RelationServiceGetFollowListResult{}
+	result := RelationServiceMGetFollowListResult{}
 	var retval *FollowResponse
-	if retval, err2 = p.handler.GetFollowList(ctx, args.Req); err2 != nil {
-		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing GetFollowList: "+err2.Error())
-		oprot.WriteMessageBegin("GetFollowList", thrift.EXCEPTION, seqId)
+	if retval, err2 = p.handler.MGetFollowList(ctx, args.Req); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing MGetFollowList: "+err2.Error())
+		oprot.WriteMessageBegin("MGetFollowList", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush(ctx)
@@ -2484,7 +2484,7 @@ func (p *relationServiceProcessorGetFollowList) Process(ctx context.Context, seq
 	} else {
 		result.Success = retval
 	}
-	if err2 = oprot.WriteMessageBegin("GetFollowList", thrift.REPLY, seqId); err2 != nil {
+	if err2 = oprot.WriteMessageBegin("MGetFollowList", thrift.REPLY, seqId); err2 != nil {
 		err = err2
 	}
 	if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -2502,16 +2502,16 @@ func (p *relationServiceProcessorGetFollowList) Process(ctx context.Context, seq
 	return true, err
 }
 
-type relationServiceProcessorGetFollowerList struct {
+type relationServiceProcessorMGetFollowerList struct {
 	handler RelationService
 }
 
-func (p *relationServiceProcessorGetFollowerList) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-	args := RelationServiceGetFollowerListArgs{}
+func (p *relationServiceProcessorMGetFollowerList) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := RelationServiceMGetFollowerListArgs{}
 	if err = args.Read(iprot); err != nil {
 		iprot.ReadMessageEnd()
 		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
-		oprot.WriteMessageBegin("GetFollowerList", thrift.EXCEPTION, seqId)
+		oprot.WriteMessageBegin("MGetFollowerList", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush(ctx)
@@ -2520,11 +2520,11 @@ func (p *relationServiceProcessorGetFollowerList) Process(ctx context.Context, s
 
 	iprot.ReadMessageEnd()
 	var err2 error
-	result := RelationServiceGetFollowerListResult{}
+	result := RelationServiceMGetFollowerListResult{}
 	var retval *FollowerResponse
-	if retval, err2 = p.handler.GetFollowerList(ctx, args.Req); err2 != nil {
-		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing GetFollowerList: "+err2.Error())
-		oprot.WriteMessageBegin("GetFollowerList", thrift.EXCEPTION, seqId)
+	if retval, err2 = p.handler.MGetFollowerList(ctx, args.Req); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing MGetFollowerList: "+err2.Error())
+		oprot.WriteMessageBegin("MGetFollowerList", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush(ctx)
@@ -2532,7 +2532,7 @@ func (p *relationServiceProcessorGetFollowerList) Process(ctx context.Context, s
 	} else {
 		result.Success = retval
 	}
-	if err2 = oprot.WriteMessageBegin("GetFollowerList", thrift.REPLY, seqId); err2 != nil {
+	if err2 = oprot.WriteMessageBegin("MGetFollowerList", thrift.REPLY, seqId); err2 != nil {
 		err = err2
 	}
 	if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -2550,16 +2550,16 @@ func (p *relationServiceProcessorGetFollowerList) Process(ctx context.Context, s
 	return true, err
 }
 
-type relationServiceProcessorGetFriendList struct {
+type relationServiceProcessorMGetFriendList struct {
 	handler RelationService
 }
 
-func (p *relationServiceProcessorGetFriendList) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-	args := RelationServiceGetFriendListArgs{}
+func (p *relationServiceProcessorMGetFriendList) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := RelationServiceMGetFriendListArgs{}
 	if err = args.Read(iprot); err != nil {
 		iprot.ReadMessageEnd()
 		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
-		oprot.WriteMessageBegin("GetFriendList", thrift.EXCEPTION, seqId)
+		oprot.WriteMessageBegin("MGetFriendList", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush(ctx)
@@ -2568,11 +2568,11 @@ func (p *relationServiceProcessorGetFriendList) Process(ctx context.Context, seq
 
 	iprot.ReadMessageEnd()
 	var err2 error
-	result := RelationServiceGetFriendListResult{}
+	result := RelationServiceMGetFriendListResult{}
 	var retval *FriendResponse
-	if retval, err2 = p.handler.GetFriendList(ctx, args.Req); err2 != nil {
-		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing GetFriendList: "+err2.Error())
-		oprot.WriteMessageBegin("GetFriendList", thrift.EXCEPTION, seqId)
+	if retval, err2 = p.handler.MGetFriendList(ctx, args.Req); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing MGetFriendList: "+err2.Error())
+		oprot.WriteMessageBegin("MGetFriendList", thrift.EXCEPTION, seqId)
 		x.Write(oprot)
 		oprot.WriteMessageEnd()
 		oprot.Flush(ctx)
@@ -2580,7 +2580,7 @@ func (p *relationServiceProcessorGetFriendList) Process(ctx context.Context, seq
 	} else {
 		result.Success = retval
 	}
-	if err2 = oprot.WriteMessageBegin("GetFriendList", thrift.REPLY, seqId); err2 != nil {
+	if err2 = oprot.WriteMessageBegin("MGetFriendList", thrift.REPLY, seqId); err2 != nil {
 		err = err2
 	}
 	if err2 = result.Write(oprot); err == nil && err2 != nil {
@@ -2944,39 +2944,39 @@ func (p *RelationServiceActionRelationResult) Field0DeepEqual(src *ActionRespons
 	return true
 }
 
-type RelationServiceGetFollowListArgs struct {
+type RelationServiceMGetFollowListArgs struct {
 	Req *FollowRequest `thrift:"req,1" frugal:"1,default,FollowRequest" json:"req"`
 }
 
-func NewRelationServiceGetFollowListArgs() *RelationServiceGetFollowListArgs {
-	return &RelationServiceGetFollowListArgs{}
+func NewRelationServiceMGetFollowListArgs() *RelationServiceMGetFollowListArgs {
+	return &RelationServiceMGetFollowListArgs{}
 }
 
-func (p *RelationServiceGetFollowListArgs) InitDefault() {
-	*p = RelationServiceGetFollowListArgs{}
+func (p *RelationServiceMGetFollowListArgs) InitDefault() {
+	*p = RelationServiceMGetFollowListArgs{}
 }
 
-var RelationServiceGetFollowListArgs_Req_DEFAULT *FollowRequest
+var RelationServiceMGetFollowListArgs_Req_DEFAULT *FollowRequest
 
-func (p *RelationServiceGetFollowListArgs) GetReq() (v *FollowRequest) {
+func (p *RelationServiceMGetFollowListArgs) GetReq() (v *FollowRequest) {
 	if !p.IsSetReq() {
-		return RelationServiceGetFollowListArgs_Req_DEFAULT
+		return RelationServiceMGetFollowListArgs_Req_DEFAULT
 	}
 	return p.Req
 }
-func (p *RelationServiceGetFollowListArgs) SetReq(val *FollowRequest) {
+func (p *RelationServiceMGetFollowListArgs) SetReq(val *FollowRequest) {
 	p.Req = val
 }
 
-var fieldIDToName_RelationServiceGetFollowListArgs = map[int16]string{
+var fieldIDToName_RelationServiceMGetFollowListArgs = map[int16]string{
 	1: "req",
 }
 
-func (p *RelationServiceGetFollowListArgs) IsSetReq() bool {
+func (p *RelationServiceMGetFollowListArgs) IsSetReq() bool {
 	return p.Req != nil
 }
 
-func (p *RelationServiceGetFollowListArgs) Read(iprot thrift.TProtocol) (err error) {
+func (p *RelationServiceMGetFollowListArgs) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
@@ -3025,7 +3025,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_RelationServiceGetFollowListArgs[fieldId]), err)
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_RelationServiceMGetFollowListArgs[fieldId]), err)
 SkipFieldError:
 	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 
@@ -3035,7 +3035,7 @@ ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 }
 
-func (p *RelationServiceGetFollowListArgs) ReadField1(iprot thrift.TProtocol) error {
+func (p *RelationServiceMGetFollowListArgs) ReadField1(iprot thrift.TProtocol) error {
 	p.Req = NewFollowRequest()
 	if err := p.Req.Read(iprot); err != nil {
 		return err
@@ -3043,9 +3043,9 @@ func (p *RelationServiceGetFollowListArgs) ReadField1(iprot thrift.TProtocol) er
 	return nil
 }
 
-func (p *RelationServiceGetFollowListArgs) Write(oprot thrift.TProtocol) (err error) {
+func (p *RelationServiceMGetFollowListArgs) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
-	if err = oprot.WriteStructBegin("GetFollowList_args"); err != nil {
+	if err = oprot.WriteStructBegin("MGetFollowList_args"); err != nil {
 		goto WriteStructBeginError
 	}
 	if p != nil {
@@ -3072,7 +3072,7 @@ WriteStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
 }
 
-func (p *RelationServiceGetFollowListArgs) writeField1(oprot thrift.TProtocol) (err error) {
+func (p *RelationServiceMGetFollowListArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	if err = oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
 		goto WriteFieldBeginError
 	}
@@ -3089,14 +3089,14 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
 }
 
-func (p *RelationServiceGetFollowListArgs) String() string {
+func (p *RelationServiceMGetFollowListArgs) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("RelationServiceGetFollowListArgs(%+v)", *p)
+	return fmt.Sprintf("RelationServiceMGetFollowListArgs(%+v)", *p)
 }
 
-func (p *RelationServiceGetFollowListArgs) DeepEqual(ano *RelationServiceGetFollowListArgs) bool {
+func (p *RelationServiceMGetFollowListArgs) DeepEqual(ano *RelationServiceMGetFollowListArgs) bool {
 	if p == ano {
 		return true
 	} else if p == nil || ano == nil {
@@ -3108,7 +3108,7 @@ func (p *RelationServiceGetFollowListArgs) DeepEqual(ano *RelationServiceGetFoll
 	return true
 }
 
-func (p *RelationServiceGetFollowListArgs) Field1DeepEqual(src *FollowRequest) bool {
+func (p *RelationServiceMGetFollowListArgs) Field1DeepEqual(src *FollowRequest) bool {
 
 	if !p.Req.DeepEqual(src) {
 		return false
@@ -3116,39 +3116,39 @@ func (p *RelationServiceGetFollowListArgs) Field1DeepEqual(src *FollowRequest) b
 	return true
 }
 
-type RelationServiceGetFollowListResult struct {
+type RelationServiceMGetFollowListResult struct {
 	Success *FollowResponse `thrift:"success,0,optional" frugal:"0,optional,FollowResponse" json:"success,omitempty"`
 }
 
-func NewRelationServiceGetFollowListResult() *RelationServiceGetFollowListResult {
-	return &RelationServiceGetFollowListResult{}
+func NewRelationServiceMGetFollowListResult() *RelationServiceMGetFollowListResult {
+	return &RelationServiceMGetFollowListResult{}
 }
 
-func (p *RelationServiceGetFollowListResult) InitDefault() {
-	*p = RelationServiceGetFollowListResult{}
+func (p *RelationServiceMGetFollowListResult) InitDefault() {
+	*p = RelationServiceMGetFollowListResult{}
 }
 
-var RelationServiceGetFollowListResult_Success_DEFAULT *FollowResponse
+var RelationServiceMGetFollowListResult_Success_DEFAULT *FollowResponse
 
-func (p *RelationServiceGetFollowListResult) GetSuccess() (v *FollowResponse) {
+func (p *RelationServiceMGetFollowListResult) GetSuccess() (v *FollowResponse) {
 	if !p.IsSetSuccess() {
-		return RelationServiceGetFollowListResult_Success_DEFAULT
+		return RelationServiceMGetFollowListResult_Success_DEFAULT
 	}
 	return p.Success
 }
-func (p *RelationServiceGetFollowListResult) SetSuccess(x interface{}) {
+func (p *RelationServiceMGetFollowListResult) SetSuccess(x interface{}) {
 	p.Success = x.(*FollowResponse)
 }
 
-var fieldIDToName_RelationServiceGetFollowListResult = map[int16]string{
+var fieldIDToName_RelationServiceMGetFollowListResult = map[int16]string{
 	0: "success",
 }
 
-func (p *RelationServiceGetFollowListResult) IsSetSuccess() bool {
+func (p *RelationServiceMGetFollowListResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
 
-func (p *RelationServiceGetFollowListResult) Read(iprot thrift.TProtocol) (err error) {
+func (p *RelationServiceMGetFollowListResult) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
@@ -3197,7 +3197,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_RelationServiceGetFollowListResult[fieldId]), err)
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_RelationServiceMGetFollowListResult[fieldId]), err)
 SkipFieldError:
 	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 
@@ -3207,7 +3207,7 @@ ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 }
 
-func (p *RelationServiceGetFollowListResult) ReadField0(iprot thrift.TProtocol) error {
+func (p *RelationServiceMGetFollowListResult) ReadField0(iprot thrift.TProtocol) error {
 	p.Success = NewFollowResponse()
 	if err := p.Success.Read(iprot); err != nil {
 		return err
@@ -3215,9 +3215,9 @@ func (p *RelationServiceGetFollowListResult) ReadField0(iprot thrift.TProtocol) 
 	return nil
 }
 
-func (p *RelationServiceGetFollowListResult) Write(oprot thrift.TProtocol) (err error) {
+func (p *RelationServiceMGetFollowListResult) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
-	if err = oprot.WriteStructBegin("GetFollowList_result"); err != nil {
+	if err = oprot.WriteStructBegin("MGetFollowList_result"); err != nil {
 		goto WriteStructBeginError
 	}
 	if p != nil {
@@ -3244,7 +3244,7 @@ WriteStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
 }
 
-func (p *RelationServiceGetFollowListResult) writeField0(oprot thrift.TProtocol) (err error) {
+func (p *RelationServiceMGetFollowListResult) writeField0(oprot thrift.TProtocol) (err error) {
 	if p.IsSetSuccess() {
 		if err = oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
 			goto WriteFieldBeginError
@@ -3263,14 +3263,14 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 0 end error: ", p), err)
 }
 
-func (p *RelationServiceGetFollowListResult) String() string {
+func (p *RelationServiceMGetFollowListResult) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("RelationServiceGetFollowListResult(%+v)", *p)
+	return fmt.Sprintf("RelationServiceMGetFollowListResult(%+v)", *p)
 }
 
-func (p *RelationServiceGetFollowListResult) DeepEqual(ano *RelationServiceGetFollowListResult) bool {
+func (p *RelationServiceMGetFollowListResult) DeepEqual(ano *RelationServiceMGetFollowListResult) bool {
 	if p == ano {
 		return true
 	} else if p == nil || ano == nil {
@@ -3282,7 +3282,7 @@ func (p *RelationServiceGetFollowListResult) DeepEqual(ano *RelationServiceGetFo
 	return true
 }
 
-func (p *RelationServiceGetFollowListResult) Field0DeepEqual(src *FollowResponse) bool {
+func (p *RelationServiceMGetFollowListResult) Field0DeepEqual(src *FollowResponse) bool {
 
 	if !p.Success.DeepEqual(src) {
 		return false
@@ -3290,39 +3290,39 @@ func (p *RelationServiceGetFollowListResult) Field0DeepEqual(src *FollowResponse
 	return true
 }
 
-type RelationServiceGetFollowerListArgs struct {
+type RelationServiceMGetFollowerListArgs struct {
 	Req *FollowerRequest `thrift:"req,1" frugal:"1,default,FollowerRequest" json:"req"`
 }
 
-func NewRelationServiceGetFollowerListArgs() *RelationServiceGetFollowerListArgs {
-	return &RelationServiceGetFollowerListArgs{}
+func NewRelationServiceMGetFollowerListArgs() *RelationServiceMGetFollowerListArgs {
+	return &RelationServiceMGetFollowerListArgs{}
 }
 
-func (p *RelationServiceGetFollowerListArgs) InitDefault() {
-	*p = RelationServiceGetFollowerListArgs{}
+func (p *RelationServiceMGetFollowerListArgs) InitDefault() {
+	*p = RelationServiceMGetFollowerListArgs{}
 }
 
-var RelationServiceGetFollowerListArgs_Req_DEFAULT *FollowerRequest
+var RelationServiceMGetFollowerListArgs_Req_DEFAULT *FollowerRequest
 
-func (p *RelationServiceGetFollowerListArgs) GetReq() (v *FollowerRequest) {
+func (p *RelationServiceMGetFollowerListArgs) GetReq() (v *FollowerRequest) {
 	if !p.IsSetReq() {
-		return RelationServiceGetFollowerListArgs_Req_DEFAULT
+		return RelationServiceMGetFollowerListArgs_Req_DEFAULT
 	}
 	return p.Req
 }
-func (p *RelationServiceGetFollowerListArgs) SetReq(val *FollowerRequest) {
+func (p *RelationServiceMGetFollowerListArgs) SetReq(val *FollowerRequest) {
 	p.Req = val
 }
 
-var fieldIDToName_RelationServiceGetFollowerListArgs = map[int16]string{
+var fieldIDToName_RelationServiceMGetFollowerListArgs = map[int16]string{
 	1: "req",
 }
 
-func (p *RelationServiceGetFollowerListArgs) IsSetReq() bool {
+func (p *RelationServiceMGetFollowerListArgs) IsSetReq() bool {
 	return p.Req != nil
 }
 
-func (p *RelationServiceGetFollowerListArgs) Read(iprot thrift.TProtocol) (err error) {
+func (p *RelationServiceMGetFollowerListArgs) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
@@ -3371,7 +3371,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_RelationServiceGetFollowerListArgs[fieldId]), err)
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_RelationServiceMGetFollowerListArgs[fieldId]), err)
 SkipFieldError:
 	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 
@@ -3381,7 +3381,7 @@ ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 }
 
-func (p *RelationServiceGetFollowerListArgs) ReadField1(iprot thrift.TProtocol) error {
+func (p *RelationServiceMGetFollowerListArgs) ReadField1(iprot thrift.TProtocol) error {
 	p.Req = NewFollowerRequest()
 	if err := p.Req.Read(iprot); err != nil {
 		return err
@@ -3389,9 +3389,9 @@ func (p *RelationServiceGetFollowerListArgs) ReadField1(iprot thrift.TProtocol) 
 	return nil
 }
 
-func (p *RelationServiceGetFollowerListArgs) Write(oprot thrift.TProtocol) (err error) {
+func (p *RelationServiceMGetFollowerListArgs) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
-	if err = oprot.WriteStructBegin("GetFollowerList_args"); err != nil {
+	if err = oprot.WriteStructBegin("MGetFollowerList_args"); err != nil {
 		goto WriteStructBeginError
 	}
 	if p != nil {
@@ -3418,7 +3418,7 @@ WriteStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
 }
 
-func (p *RelationServiceGetFollowerListArgs) writeField1(oprot thrift.TProtocol) (err error) {
+func (p *RelationServiceMGetFollowerListArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	if err = oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
 		goto WriteFieldBeginError
 	}
@@ -3435,14 +3435,14 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
 }
 
-func (p *RelationServiceGetFollowerListArgs) String() string {
+func (p *RelationServiceMGetFollowerListArgs) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("RelationServiceGetFollowerListArgs(%+v)", *p)
+	return fmt.Sprintf("RelationServiceMGetFollowerListArgs(%+v)", *p)
 }
 
-func (p *RelationServiceGetFollowerListArgs) DeepEqual(ano *RelationServiceGetFollowerListArgs) bool {
+func (p *RelationServiceMGetFollowerListArgs) DeepEqual(ano *RelationServiceMGetFollowerListArgs) bool {
 	if p == ano {
 		return true
 	} else if p == nil || ano == nil {
@@ -3454,7 +3454,7 @@ func (p *RelationServiceGetFollowerListArgs) DeepEqual(ano *RelationServiceGetFo
 	return true
 }
 
-func (p *RelationServiceGetFollowerListArgs) Field1DeepEqual(src *FollowerRequest) bool {
+func (p *RelationServiceMGetFollowerListArgs) Field1DeepEqual(src *FollowerRequest) bool {
 
 	if !p.Req.DeepEqual(src) {
 		return false
@@ -3462,39 +3462,39 @@ func (p *RelationServiceGetFollowerListArgs) Field1DeepEqual(src *FollowerReques
 	return true
 }
 
-type RelationServiceGetFollowerListResult struct {
+type RelationServiceMGetFollowerListResult struct {
 	Success *FollowerResponse `thrift:"success,0,optional" frugal:"0,optional,FollowerResponse" json:"success,omitempty"`
 }
 
-func NewRelationServiceGetFollowerListResult() *RelationServiceGetFollowerListResult {
-	return &RelationServiceGetFollowerListResult{}
+func NewRelationServiceMGetFollowerListResult() *RelationServiceMGetFollowerListResult {
+	return &RelationServiceMGetFollowerListResult{}
 }
 
-func (p *RelationServiceGetFollowerListResult) InitDefault() {
-	*p = RelationServiceGetFollowerListResult{}
+func (p *RelationServiceMGetFollowerListResult) InitDefault() {
+	*p = RelationServiceMGetFollowerListResult{}
 }
 
-var RelationServiceGetFollowerListResult_Success_DEFAULT *FollowerResponse
+var RelationServiceMGetFollowerListResult_Success_DEFAULT *FollowerResponse
 
-func (p *RelationServiceGetFollowerListResult) GetSuccess() (v *FollowerResponse) {
+func (p *RelationServiceMGetFollowerListResult) GetSuccess() (v *FollowerResponse) {
 	if !p.IsSetSuccess() {
-		return RelationServiceGetFollowerListResult_Success_DEFAULT
+		return RelationServiceMGetFollowerListResult_Success_DEFAULT
 	}
 	return p.Success
 }
-func (p *RelationServiceGetFollowerListResult) SetSuccess(x interface{}) {
+func (p *RelationServiceMGetFollowerListResult) SetSuccess(x interface{}) {
 	p.Success = x.(*FollowerResponse)
 }
 
-var fieldIDToName_RelationServiceGetFollowerListResult = map[int16]string{
+var fieldIDToName_RelationServiceMGetFollowerListResult = map[int16]string{
 	0: "success",
 }
 
-func (p *RelationServiceGetFollowerListResult) IsSetSuccess() bool {
+func (p *RelationServiceMGetFollowerListResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
 
-func (p *RelationServiceGetFollowerListResult) Read(iprot thrift.TProtocol) (err error) {
+func (p *RelationServiceMGetFollowerListResult) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
@@ -3543,7 +3543,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_RelationServiceGetFollowerListResult[fieldId]), err)
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_RelationServiceMGetFollowerListResult[fieldId]), err)
 SkipFieldError:
 	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 
@@ -3553,7 +3553,7 @@ ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 }
 
-func (p *RelationServiceGetFollowerListResult) ReadField0(iprot thrift.TProtocol) error {
+func (p *RelationServiceMGetFollowerListResult) ReadField0(iprot thrift.TProtocol) error {
 	p.Success = NewFollowerResponse()
 	if err := p.Success.Read(iprot); err != nil {
 		return err
@@ -3561,9 +3561,9 @@ func (p *RelationServiceGetFollowerListResult) ReadField0(iprot thrift.TProtocol
 	return nil
 }
 
-func (p *RelationServiceGetFollowerListResult) Write(oprot thrift.TProtocol) (err error) {
+func (p *RelationServiceMGetFollowerListResult) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
-	if err = oprot.WriteStructBegin("GetFollowerList_result"); err != nil {
+	if err = oprot.WriteStructBegin("MGetFollowerList_result"); err != nil {
 		goto WriteStructBeginError
 	}
 	if p != nil {
@@ -3590,7 +3590,7 @@ WriteStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
 }
 
-func (p *RelationServiceGetFollowerListResult) writeField0(oprot thrift.TProtocol) (err error) {
+func (p *RelationServiceMGetFollowerListResult) writeField0(oprot thrift.TProtocol) (err error) {
 	if p.IsSetSuccess() {
 		if err = oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
 			goto WriteFieldBeginError
@@ -3609,14 +3609,14 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 0 end error: ", p), err)
 }
 
-func (p *RelationServiceGetFollowerListResult) String() string {
+func (p *RelationServiceMGetFollowerListResult) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("RelationServiceGetFollowerListResult(%+v)", *p)
+	return fmt.Sprintf("RelationServiceMGetFollowerListResult(%+v)", *p)
 }
 
-func (p *RelationServiceGetFollowerListResult) DeepEqual(ano *RelationServiceGetFollowerListResult) bool {
+func (p *RelationServiceMGetFollowerListResult) DeepEqual(ano *RelationServiceMGetFollowerListResult) bool {
 	if p == ano {
 		return true
 	} else if p == nil || ano == nil {
@@ -3628,7 +3628,7 @@ func (p *RelationServiceGetFollowerListResult) DeepEqual(ano *RelationServiceGet
 	return true
 }
 
-func (p *RelationServiceGetFollowerListResult) Field0DeepEqual(src *FollowerResponse) bool {
+func (p *RelationServiceMGetFollowerListResult) Field0DeepEqual(src *FollowerResponse) bool {
 
 	if !p.Success.DeepEqual(src) {
 		return false
@@ -3636,39 +3636,39 @@ func (p *RelationServiceGetFollowerListResult) Field0DeepEqual(src *FollowerResp
 	return true
 }
 
-type RelationServiceGetFriendListArgs struct {
+type RelationServiceMGetFriendListArgs struct {
 	Req *FriendRequest `thrift:"req,1" frugal:"1,default,FriendRequest" json:"req"`
 }
 
-func NewRelationServiceGetFriendListArgs() *RelationServiceGetFriendListArgs {
-	return &RelationServiceGetFriendListArgs{}
+func NewRelationServiceMGetFriendListArgs() *RelationServiceMGetFriendListArgs {
+	return &RelationServiceMGetFriendListArgs{}
 }
 
-func (p *RelationServiceGetFriendListArgs) InitDefault() {
-	*p = RelationServiceGetFriendListArgs{}
+func (p *RelationServiceMGetFriendListArgs) InitDefault() {
+	*p = RelationServiceMGetFriendListArgs{}
 }
 
-var RelationServiceGetFriendListArgs_Req_DEFAULT *FriendRequest
+var RelationServiceMGetFriendListArgs_Req_DEFAULT *FriendRequest
 
-func (p *RelationServiceGetFriendListArgs) GetReq() (v *FriendRequest) {
+func (p *RelationServiceMGetFriendListArgs) GetReq() (v *FriendRequest) {
 	if !p.IsSetReq() {
-		return RelationServiceGetFriendListArgs_Req_DEFAULT
+		return RelationServiceMGetFriendListArgs_Req_DEFAULT
 	}
 	return p.Req
 }
-func (p *RelationServiceGetFriendListArgs) SetReq(val *FriendRequest) {
+func (p *RelationServiceMGetFriendListArgs) SetReq(val *FriendRequest) {
 	p.Req = val
 }
 
-var fieldIDToName_RelationServiceGetFriendListArgs = map[int16]string{
+var fieldIDToName_RelationServiceMGetFriendListArgs = map[int16]string{
 	1: "req",
 }
 
-func (p *RelationServiceGetFriendListArgs) IsSetReq() bool {
+func (p *RelationServiceMGetFriendListArgs) IsSetReq() bool {
 	return p.Req != nil
 }
 
-func (p *RelationServiceGetFriendListArgs) Read(iprot thrift.TProtocol) (err error) {
+func (p *RelationServiceMGetFriendListArgs) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
@@ -3717,7 +3717,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_RelationServiceGetFriendListArgs[fieldId]), err)
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_RelationServiceMGetFriendListArgs[fieldId]), err)
 SkipFieldError:
 	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 
@@ -3727,7 +3727,7 @@ ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 }
 
-func (p *RelationServiceGetFriendListArgs) ReadField1(iprot thrift.TProtocol) error {
+func (p *RelationServiceMGetFriendListArgs) ReadField1(iprot thrift.TProtocol) error {
 	p.Req = NewFriendRequest()
 	if err := p.Req.Read(iprot); err != nil {
 		return err
@@ -3735,9 +3735,9 @@ func (p *RelationServiceGetFriendListArgs) ReadField1(iprot thrift.TProtocol) er
 	return nil
 }
 
-func (p *RelationServiceGetFriendListArgs) Write(oprot thrift.TProtocol) (err error) {
+func (p *RelationServiceMGetFriendListArgs) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
-	if err = oprot.WriteStructBegin("GetFriendList_args"); err != nil {
+	if err = oprot.WriteStructBegin("MGetFriendList_args"); err != nil {
 		goto WriteStructBeginError
 	}
 	if p != nil {
@@ -3764,7 +3764,7 @@ WriteStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
 }
 
-func (p *RelationServiceGetFriendListArgs) writeField1(oprot thrift.TProtocol) (err error) {
+func (p *RelationServiceMGetFriendListArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	if err = oprot.WriteFieldBegin("req", thrift.STRUCT, 1); err != nil {
 		goto WriteFieldBeginError
 	}
@@ -3781,14 +3781,14 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
 }
 
-func (p *RelationServiceGetFriendListArgs) String() string {
+func (p *RelationServiceMGetFriendListArgs) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("RelationServiceGetFriendListArgs(%+v)", *p)
+	return fmt.Sprintf("RelationServiceMGetFriendListArgs(%+v)", *p)
 }
 
-func (p *RelationServiceGetFriendListArgs) DeepEqual(ano *RelationServiceGetFriendListArgs) bool {
+func (p *RelationServiceMGetFriendListArgs) DeepEqual(ano *RelationServiceMGetFriendListArgs) bool {
 	if p == ano {
 		return true
 	} else if p == nil || ano == nil {
@@ -3800,7 +3800,7 @@ func (p *RelationServiceGetFriendListArgs) DeepEqual(ano *RelationServiceGetFrie
 	return true
 }
 
-func (p *RelationServiceGetFriendListArgs) Field1DeepEqual(src *FriendRequest) bool {
+func (p *RelationServiceMGetFriendListArgs) Field1DeepEqual(src *FriendRequest) bool {
 
 	if !p.Req.DeepEqual(src) {
 		return false
@@ -3808,39 +3808,39 @@ func (p *RelationServiceGetFriendListArgs) Field1DeepEqual(src *FriendRequest) b
 	return true
 }
 
-type RelationServiceGetFriendListResult struct {
+type RelationServiceMGetFriendListResult struct {
 	Success *FriendResponse `thrift:"success,0,optional" frugal:"0,optional,FriendResponse" json:"success,omitempty"`
 }
 
-func NewRelationServiceGetFriendListResult() *RelationServiceGetFriendListResult {
-	return &RelationServiceGetFriendListResult{}
+func NewRelationServiceMGetFriendListResult() *RelationServiceMGetFriendListResult {
+	return &RelationServiceMGetFriendListResult{}
 }
 
-func (p *RelationServiceGetFriendListResult) InitDefault() {
-	*p = RelationServiceGetFriendListResult{}
+func (p *RelationServiceMGetFriendListResult) InitDefault() {
+	*p = RelationServiceMGetFriendListResult{}
 }
 
-var RelationServiceGetFriendListResult_Success_DEFAULT *FriendResponse
+var RelationServiceMGetFriendListResult_Success_DEFAULT *FriendResponse
 
-func (p *RelationServiceGetFriendListResult) GetSuccess() (v *FriendResponse) {
+func (p *RelationServiceMGetFriendListResult) GetSuccess() (v *FriendResponse) {
 	if !p.IsSetSuccess() {
-		return RelationServiceGetFriendListResult_Success_DEFAULT
+		return RelationServiceMGetFriendListResult_Success_DEFAULT
 	}
 	return p.Success
 }
-func (p *RelationServiceGetFriendListResult) SetSuccess(x interface{}) {
+func (p *RelationServiceMGetFriendListResult) SetSuccess(x interface{}) {
 	p.Success = x.(*FriendResponse)
 }
 
-var fieldIDToName_RelationServiceGetFriendListResult = map[int16]string{
+var fieldIDToName_RelationServiceMGetFriendListResult = map[int16]string{
 	0: "success",
 }
 
-func (p *RelationServiceGetFriendListResult) IsSetSuccess() bool {
+func (p *RelationServiceMGetFriendListResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
 
-func (p *RelationServiceGetFriendListResult) Read(iprot thrift.TProtocol) (err error) {
+func (p *RelationServiceMGetFriendListResult) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
@@ -3889,7 +3889,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_RelationServiceGetFriendListResult[fieldId]), err)
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_RelationServiceMGetFriendListResult[fieldId]), err)
 SkipFieldError:
 	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 
@@ -3899,7 +3899,7 @@ ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 }
 
-func (p *RelationServiceGetFriendListResult) ReadField0(iprot thrift.TProtocol) error {
+func (p *RelationServiceMGetFriendListResult) ReadField0(iprot thrift.TProtocol) error {
 	p.Success = NewFriendResponse()
 	if err := p.Success.Read(iprot); err != nil {
 		return err
@@ -3907,9 +3907,9 @@ func (p *RelationServiceGetFriendListResult) ReadField0(iprot thrift.TProtocol) 
 	return nil
 }
 
-func (p *RelationServiceGetFriendListResult) Write(oprot thrift.TProtocol) (err error) {
+func (p *RelationServiceMGetFriendListResult) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
-	if err = oprot.WriteStructBegin("GetFriendList_result"); err != nil {
+	if err = oprot.WriteStructBegin("MGetFriendList_result"); err != nil {
 		goto WriteStructBeginError
 	}
 	if p != nil {
@@ -3936,7 +3936,7 @@ WriteStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
 }
 
-func (p *RelationServiceGetFriendListResult) writeField0(oprot thrift.TProtocol) (err error) {
+func (p *RelationServiceMGetFriendListResult) writeField0(oprot thrift.TProtocol) (err error) {
 	if p.IsSetSuccess() {
 		if err = oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
 			goto WriteFieldBeginError
@@ -3955,14 +3955,14 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 0 end error: ", p), err)
 }
 
-func (p *RelationServiceGetFriendListResult) String() string {
+func (p *RelationServiceMGetFriendListResult) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("RelationServiceGetFriendListResult(%+v)", *p)
+	return fmt.Sprintf("RelationServiceMGetFriendListResult(%+v)", *p)
 }
 
-func (p *RelationServiceGetFriendListResult) DeepEqual(ano *RelationServiceGetFriendListResult) bool {
+func (p *RelationServiceMGetFriendListResult) DeepEqual(ano *RelationServiceMGetFriendListResult) bool {
 	if p == ano {
 		return true
 	} else if p == nil || ano == nil {
@@ -3974,7 +3974,7 @@ func (p *RelationServiceGetFriendListResult) DeepEqual(ano *RelationServiceGetFr
 	return true
 }
 
-func (p *RelationServiceGetFriendListResult) Field0DeepEqual(src *FriendResponse) bool {
+func (p *RelationServiceMGetFriendListResult) Field0DeepEqual(src *FriendResponse) bool {
 
 	if !p.Success.DeepEqual(src) {
 		return false

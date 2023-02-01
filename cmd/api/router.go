@@ -3,8 +3,8 @@
 package main
 
 import (
-	handler "github.com/edufriendchen/tiktok-demo/cmd/api/biz/handler"
 	"github.com/cloudwego/hertz/pkg/app/server"
+	handler "github.com/edufriendchen/tiktok-demo/cmd/api/biz/handler"
 )
 
 // customizeRegister registers customize routers.

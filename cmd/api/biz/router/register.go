@@ -16,8 +16,16 @@ func GeneratedRegister(r *server.Hertz) {
 
 		{
 			_user := root.Group("/user")
-			_user.GET("/",  handler.GetUserInfo)
+			_user.GET("/",  handler.MGetUserInfo)
 			_user.POST("/login",  handler.Login)
 			_user.POST("/register", handler.Register)
+		}
+
+		{
+			_relation := root.Group("/relation")
+			_relation.POST("/action",  handler.RelationAction)
+			_relation.GET("/follow/list",  handler.MGetFollowList)
+			_relation.GET("/follower/list", handler.MGetFollowerList)
+			_relation.GET("/friend/list", handler.MGetFriendList)
 		}
 }

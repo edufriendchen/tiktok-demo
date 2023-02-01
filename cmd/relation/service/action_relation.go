@@ -4,28 +4,31 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/edufriendchen/tiktok-demo/kitex_gen/user"
+	"github.com/edufriendchen/tiktok-demo/kitex_gen/relation"
 	"github.com/edufriendchen/tiktok-demo/pkg/errno"
 	"github.com/neo4j/neo4j-go-driver/v5/neo4j"
 )
 
 type ActionRelationService struct {
-	ctx context.Context
+	ctx     context.Context
+	session neo4j.SessionWithContext
 }
 
-func NewActionRelationService(ctx context.Context) *ActionRelationService {
-	return &ActionRelationService{ctx: ctx}
+func NewActionRelationService(ctx context.Context, driver neo4j.DriverWithContext) *ActionRelationService {
+	session := driver.NewSession(ctx, neo4j.SessionConfig{})
+	defer session.Close(ctx)
+	return &ActionRelationService{ctx: ctx, session: session}
 }
 
-func (actionRelationService *ActionRelationService) ActionRelation(ctx context.Context, session neo4j.SessionWithContext, user *user.CheckUserRequest) (int64, error) {
-	userid, err := neo4j.ExecuteRead[int64](ctx, session, func(tx neo4j.ManagedTransaction) (int64, error) {
-		result, err := tx.Run(ctx, "MATCH (n:User {username: $username}) RETURN n.password AS ps, id(n) AS i LIMIT 1", map[string]any{
-			"username": user.Username,
+func (s *ActionRelationService) ActionRelation(req *relation.ActionRequest) (int64, error) {
+	userid, err := neo4j.ExecuteRead[int64](s.ctx, s.session, func(tx neo4j.ManagedTransaction) (int64, error) {
+		result, err := tx.Run(s.ctx, "MATCH (n:User {username: $username}) RETURN n.password AS ps, id(n) AS i LIMIT 1", map[string]any{
+			"username": req.ToUserId,
 		})
 		if err != nil {
 			return 0, err
 		}
-		record, err := result.Single(ctx)
+		record, err := result.Single(s.ctx)
 		if err != nil {
 			return 0, errno.AuthorizationFailedErr
 		}

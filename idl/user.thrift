@@ -32,19 +32,19 @@ struct CheckUserResponse {
   4:required string token                  // 用户鉴权token
 }
 
-struct GetUserRequest {
+struct MGetUserRequest {
   1:required i64 user_id                   // 用户id
   2:required string token                  // 用户鉴权token
 }
 
-struct GetUserResponse {
+struct MGetUserResponse {
   1:required i32 status_code               // 状态值
   2:optional string status_msg             // 状态信息
   3:required User user                     // 用户信息
 }
 
-service UserService{
+service UserService {
   CreateUserResponse CreateUser(1: CreateUserRequest req)   // 创建用户信息
+  MGetUserResponse MGetUser(1: MGetUserRequest req)         // 获取用户信息
   CheckUserResponse CheckUser(1: CheckUserRequest req)      // 验证用户
-  GetUserResponse GetUser(1: GetUserRequest req)            // 获取用户信息
 }   

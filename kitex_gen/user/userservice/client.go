@@ -4,16 +4,16 @@ package userservice
 
 import (
 	"context"
-	user "github.com/edufriendchen/tiktok-demo/kitex_gen/user"
 	client "github.com/cloudwego/kitex/client"
 	callopt "github.com/cloudwego/kitex/client/callopt"
+	user "github.com/edufriendchen/tiktok-demo/kitex_gen/user"
 )
 
 // Client is designed to provide IDL-compatible methods with call-option parameter for kitex framework.
 type Client interface {
 	CreateUser(ctx context.Context, req *user.CreateUserRequest, callOptions ...callopt.Option) (r *user.CreateUserResponse, err error)
+	MGetUser(ctx context.Context, req *user.MGetUserRequest, callOptions ...callopt.Option) (r *user.MGetUserResponse, err error)
 	CheckUser(ctx context.Context, req *user.CheckUserRequest, callOptions ...callopt.Option) (r *user.CheckUserResponse, err error)
-	GetUser(ctx context.Context, req *user.GetUserRequest, callOptions ...callopt.Option) (r *user.GetUserResponse, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -50,12 +50,12 @@ func (p *kUserServiceClient) CreateUser(ctx context.Context, req *user.CreateUse
 	return p.kClient.CreateUser(ctx, req)
 }
 
+func (p *kUserServiceClient) MGetUser(ctx context.Context, req *user.MGetUserRequest, callOptions ...callopt.Option) (r *user.MGetUserResponse, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.MGetUser(ctx, req)
+}
+
 func (p *kUserServiceClient) CheckUser(ctx context.Context, req *user.CheckUserRequest, callOptions ...callopt.Option) (r *user.CheckUserResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.CheckUser(ctx, req)
-}
-
-func (p *kUserServiceClient) GetUser(ctx context.Context, req *user.GetUserRequest, callOptions ...callopt.Option) (r *user.GetUserResponse, err error) {
-	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.GetUser(ctx, req)
 }

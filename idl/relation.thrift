@@ -14,7 +14,7 @@ struct ActionResponse {
 }
 
 struct FollowRequest {
-  1:required string user_id                  // 用户id
+  1:required i64 user_id                  // 用户id
   2:required string token                    // 凭证token
 }
 
@@ -32,7 +32,7 @@ struct FollowerRequest {
 struct FollowerResponse {
   1:required i32 status_code                 // 状态值
   2:optional string status_msg               // 状态信息
-  3:required list<user.User> user_list            // 关注列表
+  3:required list<user.User> user_list       // 关注列表
 }
 
 struct FriendRequest {
@@ -43,12 +43,12 @@ struct FriendRequest {
 struct FriendResponse {
   1:required i32 status_code                 // 状态值
   2:optional string status_msg               // 状态信息
-  3:required list<user.User> user_list            // 粉丝列表
+  3:required list<user.User> user_list       // 粉丝列表
 }
 
 service RelationService{
-  ActionResponse ActionRelation(1: ActionRequest req)         // 关注操作
-  FollowResponse GetFollowList(1: FollowRequest req)          // 获取关注列表
-  FollowerResponse GetFollowerList(1: FollowerRequest req)    // 获取粉丝列表
-  FriendResponse GetFriendList(1: FriendRequest req)          // 获取好友列表
+  ActionResponse ActionRelation(1: ActionRequest req)          // 关注操作
+  FollowResponse MGetFollowList(1: FollowRequest req)          // 获取关注列表
+  FollowerResponse MGetFollowerList(1: FollowerRequest req)    // 获取粉丝列表
+  FriendResponse MGetFriendList(1: FriendRequest req)          // 获取好友列表
 }

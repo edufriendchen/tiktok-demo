@@ -4,17 +4,17 @@ package relationservice
 
 import (
 	"context"
-	relation "github.com/edufriendchen/tiktok-demo/kitex_gen/relation"
 	client "github.com/cloudwego/kitex/client"
 	callopt "github.com/cloudwego/kitex/client/callopt"
+	relation "github.com/edufriendchen/tiktok-demo/kitex_gen/relation"
 )
 
 // Client is designed to provide IDL-compatible methods with call-option parameter for kitex framework.
 type Client interface {
 	ActionRelation(ctx context.Context, req *relation.ActionRequest, callOptions ...callopt.Option) (r *relation.ActionResponse, err error)
-	GetFollowList(ctx context.Context, req *relation.FollowRequest, callOptions ...callopt.Option) (r *relation.FollowResponse, err error)
-	GetFollowerList(ctx context.Context, req *relation.FollowerRequest, callOptions ...callopt.Option) (r *relation.FollowerResponse, err error)
-	GetFriendList(ctx context.Context, req *relation.FriendRequest, callOptions ...callopt.Option) (r *relation.FriendResponse, err error)
+	MGetFollowList(ctx context.Context, req *relation.FollowRequest, callOptions ...callopt.Option) (r *relation.FollowResponse, err error)
+	MGetFollowerList(ctx context.Context, req *relation.FollowerRequest, callOptions ...callopt.Option) (r *relation.FollowerResponse, err error)
+	MGetFriendList(ctx context.Context, req *relation.FriendRequest, callOptions ...callopt.Option) (r *relation.FriendResponse, err error)
 }
 
 // NewClient creates a client for the service defined in IDL.
@@ -51,17 +51,17 @@ func (p *kRelationServiceClient) ActionRelation(ctx context.Context, req *relati
 	return p.kClient.ActionRelation(ctx, req)
 }
 
-func (p *kRelationServiceClient) GetFollowList(ctx context.Context, req *relation.FollowRequest, callOptions ...callopt.Option) (r *relation.FollowResponse, err error) {
+func (p *kRelationServiceClient) MGetFollowList(ctx context.Context, req *relation.FollowRequest, callOptions ...callopt.Option) (r *relation.FollowResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.GetFollowList(ctx, req)
+	return p.kClient.MGetFollowList(ctx, req)
 }
 
-func (p *kRelationServiceClient) GetFollowerList(ctx context.Context, req *relation.FollowerRequest, callOptions ...callopt.Option) (r *relation.FollowerResponse, err error) {
+func (p *kRelationServiceClient) MGetFollowerList(ctx context.Context, req *relation.FollowerRequest, callOptions ...callopt.Option) (r *relation.FollowerResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.GetFollowerList(ctx, req)
+	return p.kClient.MGetFollowerList(ctx, req)
 }
 
-func (p *kRelationServiceClient) GetFriendList(ctx context.Context, req *relation.FriendRequest, callOptions ...callopt.Option) (r *relation.FriendResponse, err error) {
+func (p *kRelationServiceClient) MGetFriendList(ctx context.Context, req *relation.FriendRequest, callOptions ...callopt.Option) (r *relation.FriendResponse, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.GetFriendList(ctx, req)
+	return p.kClient.MGetFriendList(ctx, req)
 }

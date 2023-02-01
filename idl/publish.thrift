@@ -25,6 +25,6 @@ struct PublishResponse {
 }
 
 service RelationService{
-  ActionResponse ActionPulish(1: ActionRequest req)              // 视频上传操作
-  CommentResponse GetCommentList(1: CommentRequest req)          // 获取发布的视频列表
+  ActionResponse ActionPulish(1: ActionRequest req)               // 视频上传操作
+  PublishResponse MGetPublishList(1: PublishRequest req)          // 获取发布的视频列表
 }

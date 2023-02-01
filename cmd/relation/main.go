@@ -12,27 +12,27 @@ import (
 	"github.com/edufriendchen/tiktok-demo/pkg/consts"
 	"github.com/edufriendchen/tiktok-demo/pkg/initialize"
 	"github.com/kitex-contrib/obs-opentelemetry/logging/logrus"
+	registry_nacos "github.com/kitex-contrib/registry-nacos/registry"
 )
 
 // User RPC Server 端配置初始化
 func Init() {
 	initialize.InitJWT()
 	initialize.InitNeo4j()
-	// klog init
 	klog.SetLogger(logrus.NewLogger())
 	klog.SetLevel(klog.LevelInfo)
 }
 
 func main() {
 	Init()
-	r, _ := initialize.InitNacos()
+	cli, _ := initialize.InitNacos()
 	addr, err := net.ResolveTCPAddr(consts.TCP, consts.RelationServiceAddr)
 	if err != nil {
 		panic(err)
 	}
 	svr := relationservice.NewServer(new(RelationServiceImpl),
 		server.WithServiceAddr(addr),
-		server.WithRegistry(r),
+		server.WithRegistry(registry_nacos.NewNacosRegistry(cli)),
 		server.WithRegistryInfo(&registry.Info{
 			ServiceName: consts.RelationServiceName,
 			Addr:        addr,

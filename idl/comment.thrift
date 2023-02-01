@@ -37,5 +37,5 @@ struct CommentResponse {
 
 service RelationService {
     ActionResponse ActionComment(1: ActionRequest req)              // 评论操作
-    CommentResponse GetCommentList(1: CommentRequest req)           // 获取评论列表
+    CommentResponse MGetCommentList(1: CommentRequest req)          // 获取评论列表
 }

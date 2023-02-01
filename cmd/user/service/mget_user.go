@@ -10,16 +10,19 @@ import (
 )
 
 type GetUserService struct {
-	ctx context.Context
+	ctx     context.Context
+	session neo4j.SessionWithContext
 }
 
-func NewGetUserService(ctx context.Context) *GetUserService {
-	return &GetUserService{ctx: ctx}
+func NewGetUserService(ctx context.Context, driver neo4j.DriverWithContext) *GetUserService {
+	session := driver.NewSession(ctx, neo4j.SessionConfig{})
+	defer session.Close(ctx)
+	return &GetUserService{ctx: ctx, session: session}
 }
 
-func (getUserService *GetUserService) GetUser(ctx context.Context, session neo4j.SessionWithContext, param *user.GetUserRequest) (*user.User, error) {
-	user, err := neo4j.ExecuteRead[*user.User](ctx, session, func(tx neo4j.ManagedTransaction) (*user.User, error) {
-		result, err := tx.Run(ctx, "MATCH (n:User) WHERE id(n) = $toUserId MATCH (n1:User) WHERE id(n1) = $userId RETURN n, CASE WHEN (n1)-[:follow]->(n) THEN true ELSE false END AS result",
+func (s *GetUserService) GetUser(param *user.MGetUserRequest) (*user.User, error) {
+	user, err := neo4j.ExecuteRead[*user.User](s.ctx, s.session, func(tx neo4j.ManagedTransaction) (*user.User, error) {
+		result, err := tx.Run(s.ctx, "MATCH (n:User) WHERE id(n) = $toUserId MATCH (n1:User) WHERE id(n1) = $userId RETURN n, CASE WHEN (n1)-[:follow]->(n) THEN true ELSE false END AS result",
 			map[string]any{
 				"toUserId": 0,
 				"userId":   param.UserId,
@@ -27,7 +30,7 @@ func (getUserService *GetUserService) GetUser(ctx context.Context, session neo4j
 		if err != nil {
 			return nil, err
 		}
-		record, err := result.Single(ctx)
+		record, err := result.Single(s.ctx)
 		if err != nil {
 			return nil, err
 		}
@@ -44,11 +47,11 @@ func (getUserService *GetUserService) GetUser(ctx context.Context, session neo4j
 		if err != nil {
 			return nil, err
 		}
-		follow_count, err := neo4j.GetProperty[int64](itemNode, "followCount")
+		follow_count, err := neo4j.GetProperty[int64](itemNode, "follow_count")
 		if err != nil {
 			return nil, err
 		}
-		follower_count, err := neo4j.GetProperty[int64](itemNode, "followerCount")
+		follower_count, err := neo4j.GetProperty[int64](itemNode, "follower_count")
 		if err != nil {
 			return nil, err
 		}

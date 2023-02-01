@@ -3,7 +3,10 @@ package main
 import (
 	"context"
 
+	service "github.com/edufriendchen/tiktok-demo/cmd/relation/service"
 	relation "github.com/edufriendchen/tiktok-demo/kitex_gen/relation"
+	"github.com/edufriendchen/tiktok-demo/pkg/errno"
+	"github.com/edufriendchen/tiktok-demo/pkg/global"
 )
 
 // RelationServiceImpl implements the last service interface defined in the IDL.
@@ -11,24 +14,67 @@ type RelationServiceImpl struct{}
 
 // ActionRelation implements the RelationServiceImpl interface.
 func (s *RelationServiceImpl) ActionRelation(ctx context.Context, req *relation.ActionRequest) (resp *relation.ActionResponse, err error) {
-	// TODO: Your code here...
-	return
+	resp = new(relation.ActionResponse)
+	if err = req.IsValid(); err != nil {
+		resp = &relation.ActionResponse{StatusCode: errno.ParamErr.ErrCode, StatusMsg: &errno.ParamErr.ErrMsg}
+		return resp, err
+	}
+	_, err = service.NewActionRelationService(ctx, global.Neo4jDriver).ActionRelation(req)
+	if err != nil {
+		resp = &relation.ActionResponse{StatusCode: errno.ServiceErr.ErrCode, StatusMsg: &errno.ServiceErr.ErrMsg}
+		return resp, err
+	}
+	resp = &relation.ActionResponse{StatusCode: errno.Success.ErrCode, StatusMsg: &errno.Success.ErrMsg}
+	return resp, nil
 }
 
-// GetFollowList implements the RelationServiceImpl interface.
-func (s *RelationServiceImpl) GetFollowList(ctx context.Context, req *relation.FollowRequest) (resp *relation.FollowResponse, err error) {
-	// TODO: Your code here...
-	return
+// MGetFollowList implements the RelationServiceImpl interface.
+func (s *RelationServiceImpl) MGetFollowList(ctx context.Context, req *relation.FollowRequest) (resp *relation.FollowResponse, err error) {
+	resp = new(relation.FollowResponse)
+	if err = req.IsValid(); err != nil {
+		resp = &relation.FollowResponse{StatusCode: errno.ParamErr.ErrCode, StatusMsg: &errno.ParamErr.ErrMsg}
+		return resp, err
+	}
+	list, err := service.NewGetFollowListService(ctx, global.Neo4jDriver).GetFollowList(req)
+	if err != nil {
+		resp = &relation.FollowResponse{StatusCode: errno.ServiceErr.ErrCode, StatusMsg: &errno.ServiceErr.ErrMsg}
+		return resp, err
+	}
+	resp = &relation.FollowResponse{StatusCode: errno.Success.ErrCode, StatusMsg: &errno.Success.ErrMsg}
+	resp.UserList = list
+	return resp, nil
 }
 
-// GetFollowerList implements the RelationServiceImpl interface.
-func (s *RelationServiceImpl) GetFollowerList(ctx context.Context, req *relation.FollowerRequest) (resp *relation.FollowerResponse, err error) {
-	// TODO: Your code here...
-	return
+// MGetFollowerList implements the RelationServiceImpl interface.
+func (s *RelationServiceImpl) MGetFollowerList(ctx context.Context, req *relation.FollowerRequest) (resp *relation.FollowerResponse, err error) {
+	resp = new(relation.FollowerResponse)
+	if err = req.IsValid(); err != nil {
+		resp = &relation.FollowerResponse{StatusCode: errno.ParamErr.ErrCode, StatusMsg: &errno.ParamErr.ErrMsg}
+		return resp, err
+	}
+	list, err := service.NewGetFollowerListService(ctx, global.Neo4jDriver).GetFollowerList(req)
+	if err != nil {
+		resp = &relation.FollowerResponse{StatusCode: errno.ServiceErr.ErrCode, StatusMsg: &errno.ServiceErr.ErrMsg}
+		return resp, err
+	}
+	resp = &relation.FollowerResponse{StatusCode: errno.Success.ErrCode, StatusMsg: &errno.Success.ErrMsg}
+	resp.UserList = list
+	return resp, nil
 }
 
-// GetFriendList implements the RelationServiceImpl interface.
-func (s *RelationServiceImpl) GetFriendList(ctx context.Context, req *relation.FriendRequest) (resp *relation.FriendResponse, err error) {
-	// TODO: Your code here...
-	return
+// MGetFriendList implements the RelationServiceImpl interface.
+func (s *RelationServiceImpl) MGetFriendList(ctx context.Context, req *relation.FriendRequest) (resp *relation.FriendResponse, err error) {
+	resp = new(relation.FriendResponse)
+	if err = req.IsValid(); err != nil {
+		resp = &relation.FriendResponse{StatusCode: errno.ParamErr.ErrCode, StatusMsg: &errno.ParamErr.ErrMsg}
+		return resp, err
+	}
+	list, err := service.NewGetFriendListService(ctx, global.Neo4jDriver).GetFriendList(req)
+	if err != nil {
+		resp = &relation.FriendResponse{StatusCode: errno.ServiceErr.ErrCode, StatusMsg: &errno.ServiceErr.ErrMsg}
+		return resp, err
+	}
+	resp = &relation.FriendResponse{StatusCode: errno.Success.ErrCode, StatusMsg: &errno.Success.ErrMsg}
+	resp.UserList = list
+	return resp, nil
 }

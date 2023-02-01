@@ -28,7 +28,7 @@ const (
 	Notes           = "notes"
 	MySQLDefaultDSN = "gorm:gorm@tcp(localhost:3306)/gorm?charset=utf8&parseTime=True&loc=Local"
 	TCP             = "tcp"
-	ExportEndpoint  = ":4317"
+	ExportEndpoint  = "localhost:14268"
 	DefaultLimit    = 10
 	Neo4jUri        = "neo4j://localhost:7687"
 	Neo4jUsername   = "neo4j"

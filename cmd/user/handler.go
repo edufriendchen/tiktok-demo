@@ -2,9 +2,10 @@ package main
 
 import (
 	"context"
+	"fmt"
 
-	"github.com/edufriendchen/tiktok-demo/cmd/user/global"
 	"github.com/edufriendchen/tiktok-demo/pkg/errno"
+	"github.com/edufriendchen/tiktok-demo/pkg/global"
 
 	service "github.com/edufriendchen/tiktok-demo/cmd/user/service"
 
@@ -22,7 +23,7 @@ func (s *UserServiceImpl) CreateUser(ctx context.Context, req *user.CreateUserRe
 		resp = &user.CreateUserResponse{StatusCode: errno.ParamErr.ErrCode, StatusMsg: &errno.ParamErr.ErrMsg}
 		return resp, err
 	}
-	userid, err := service.NewCreateUserService(ctx).CreateUserNode(ctx, global.Neo4jSession, req)
+	userid, err := service.NewCreateUserService(ctx, global.Neo4jDriver).CreateUserNode(req)
 	if err != nil {
 		resp = &user.CreateUserResponse{StatusCode: errno.ServiceErr.ErrCode, StatusMsg: &errno.ServiceErr.ErrMsg}
 		return resp, err
@@ -38,7 +39,7 @@ func (s *UserServiceImpl) CheckUser(ctx context.Context, req *user.CheckUserRequ
 		resp = &user.CheckUserResponse{StatusCode: errno.ParamErr.ErrCode, StatusMsg: &errno.ParamErr.ErrMsg}
 		return resp, err
 	}
-	userid, err := service.NewCheckUserService(ctx).Login(ctx, global.Neo4jSession, req)
+	userid, err := service.NewCheckUserService(ctx, global.Neo4jDriver).Login(req)
 	if err != nil {
 		resp = &user.CheckUserResponse{StatusCode: errno.ServiceErr.ErrCode, StatusMsg: &errno.ServiceErr.ErrMsg}
 		return resp, err
@@ -51,18 +52,24 @@ func (s *UserServiceImpl) CheckUser(ctx context.Context, req *user.CheckUserRequ
 }
 
 // GetUserById implements the UserServiceImpl interface.
-func (s *UserServiceImpl) GetUser(ctx context.Context, req *user.GetUserRequest) (resp *user.GetUserResponse, err error) {
-	resp = new(user.GetUserResponse)
+func (s *UserServiceImpl) MGetUser(ctx context.Context, req *user.MGetUserRequest) (resp *user.MGetUserResponse, err error) {
+	resp = new(user.MGetUserResponse)
 	if err = req.IsValid(); err != nil {
-		resp = &user.GetUserResponse{StatusCode: errno.ParamErr.ErrCode, StatusMsg: &errno.ParamErr.ErrMsg}
+		resp = &user.MGetUserResponse{StatusCode: errno.ParamErr.ErrCode, StatusMsg: &errno.ParamErr.ErrMsg}
 		return resp, err
 	}
-	userInfo, err := service.NewGetUserService(ctx).GetUser(ctx, global.Neo4jSession, req)
+	claims, err := global.Jwt.ParseToken(req.Token)
 	if err != nil {
-		resp = &user.GetUserResponse{StatusCode: errno.ParamErr.ErrCode, StatusMsg: &errno.ParamErr.ErrMsg}
+		resp = &user.MGetUserResponse{StatusCode: errno.AuthorizationFailedErr.ErrCode, StatusMsg: &errno.AuthorizationFailedErr.ErrMsg}
+		return resp, nil
+	}
+	fmt.Println("token -> id", claims)
+	userInfo, err := service.NewGetUserService(ctx, global.Neo4jDriver).GetUser(req)
+	if err != nil {
+		resp = &user.MGetUserResponse{StatusCode: errno.ParamErr.ErrCode, StatusMsg: &errno.ParamErr.ErrMsg}
 		return resp, err
 	}
-	resp = &user.GetUserResponse{StatusCode: errno.Success.ErrCode, StatusMsg: &errno.Success.ErrMsg}
+	resp = &user.MGetUserResponse{StatusCode: errno.Success.ErrCode, StatusMsg: &errno.Success.ErrMsg}
 	resp.User = userInfo
 	return resp, nil
 }

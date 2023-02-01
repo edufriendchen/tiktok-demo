@@ -1,17 +1,15 @@
 package initialize
 
 import (
-	"fmt"
-
-	"github.com/cloudwego/kitex/pkg/registry"
-	nacos "github.com/kitex-contrib/registry-nacos/registry"
+	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/nacos-group/nacos-sdk-go/clients"
+	"github.com/nacos-group/nacos-sdk-go/clients/naming_client"
 	"github.com/nacos-group/nacos-sdk-go/common/constant"
 	"github.com/nacos-group/nacos-sdk-go/vo"
 )
 
-// InitNacos to init nacos
-func InitNacos() (registry.Registry, error) {
+// InitHertzNacos to init nacos
+func InitNacos() (naming_client.INamingClient, error) {
 	// Read configuration information from nacos
 	sc := []constant.ServerConfig{
 		*constant.NewServerConfig("127.0.0.1", 8848),
@@ -24,7 +22,7 @@ func InitNacos() (registry.Registry, error) {
 		CacheDir:            "/tmp/nacos/cache",
 		LogLevel:            "info",
 		Username:            "nacos",
-		Password:            "nacos",
+		Password:            "nacosfriend0429",
 	}
 	cli, err := clients.NewNamingClient(
 		vo.NacosClientParam{
@@ -33,7 +31,7 @@ func InitNacos() (registry.Registry, error) {
 		},
 	)
 	if err != nil {
-		fmt.Println("Nacos Init error!")
+		klog.Infof("Nacos Init Error: %v", err)
 	}
-	return nacos.NewNacosRegistry(cli), nil
+	return cli, nil
 }

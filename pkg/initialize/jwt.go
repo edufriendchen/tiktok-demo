@@ -1,8 +1,8 @@
 package initialize
 
 import (
-	"github.com/edufriendchen/tiktok-demo/cmd/user/global"
 	"github.com/edufriendchen/tiktok-demo/pkg/consts"
+	"github.com/edufriendchen/tiktok-demo/pkg/global"
 	"github.com/edufriendchen/tiktok-demo/pkg/jwt"
 )
 
