@@ -11,9 +11,9 @@ import (
 )
 
 type ActionRequest struct {
-	Token      string `thrift:"token,1,required" frugal:"1,required,string" json:"token"`
-	ToUserId   string `thrift:"to_user_id,2,required" frugal:"2,required,string" json:"to_user_id"`
-	ActionType string `thrift:"action_type,3,required" frugal:"3,required,string" json:"action_type"`
+	Token      string `thrift:"token,1,required" frugal:"1,required,string" json:"token" query:"token"`
+	ToUserId   int64  `thrift:"to_user_id,2,required" frugal:"2,required,i64" json:"to_user_id" query:"to_user_id"`
+	ActionType string `thrift:"action_type,3,required" frugal:"3,required,string" json:"action_type" query:"action_type"`
 }
 
 func NewActionRequest() *ActionRequest {
@@ -28,7 +28,7 @@ func (p *ActionRequest) GetToken() (v string) {
 	return p.Token
 }
 
-func (p *ActionRequest) GetToUserId() (v string) {
+func (p *ActionRequest) GetToUserId() (v int64) {
 	return p.ToUserId
 }
 
@@ -38,7 +38,7 @@ func (p *ActionRequest) GetActionType() (v string) {
 func (p *ActionRequest) SetToken(val string) {
 	p.Token = val
 }
-func (p *ActionRequest) SetToUserId(val string) {
+func (p *ActionRequest) SetToUserId(val int64) {
 	p.ToUserId = val
 }
 func (p *ActionRequest) SetActionType(val string) {
@@ -85,7 +85,7 @@ func (p *ActionRequest) Read(iprot thrift.TProtocol) (err error) {
 				}
 			}
 		case 2:
-			if fieldTypeId == thrift.STRING {
+			if fieldTypeId == thrift.I64 {
 				if err = p.ReadField2(iprot); err != nil {
 					goto ReadFieldError
 				}
@@ -162,7 +162,7 @@ func (p *ActionRequest) ReadField1(iprot thrift.TProtocol) error {
 }
 
 func (p *ActionRequest) ReadField2(iprot thrift.TProtocol) error {
-	if v, err := iprot.ReadString(); err != nil {
+	if v, err := iprot.ReadI64(); err != nil {
 		return err
 	} else {
 		p.ToUserId = v
@@ -234,10 +234,10 @@ WriteFieldEndError:
 }
 
 func (p *ActionRequest) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("to_user_id", thrift.STRING, 2); err != nil {
+	if err = oprot.WriteFieldBegin("to_user_id", thrift.I64, 2); err != nil {
 		goto WriteFieldBeginError
 	}
-	if err := oprot.WriteString(p.ToUserId); err != nil {
+	if err := oprot.WriteI64(p.ToUserId); err != nil {
 		return err
 	}
 	if err = oprot.WriteFieldEnd(); err != nil {
@@ -299,9 +299,9 @@ func (p *ActionRequest) Field1DeepEqual(src string) bool {
 	}
 	return true
 }
-func (p *ActionRequest) Field2DeepEqual(src string) bool {
+func (p *ActionRequest) Field2DeepEqual(src int64) bool {
 
-	if strings.Compare(p.ToUserId, src) != 0 {
+	if p.ToUserId != src {
 		return false
 	}
 	return true
@@ -562,8 +562,8 @@ func (p *ActionResponse) Field2DeepEqual(src *string) bool {
 }
 
 type FollowRequest struct {
-	UserId int64  `thrift:"user_id,1,required" frugal:"1,required,i64" json:"user_id"`
-	Token  string `thrift:"token,2,required" frugal:"2,required,string" json:"token"`
+	UserId int64  `thrift:"user_id,1,required" frugal:"1,required,i64" json:"user_id" query:"user_id"`
+	Token  string `thrift:"token,2,required" frugal:"2,required,string" json:"token" query:"token"`
 }
 
 func NewFollowRequest() *FollowRequest {
@@ -1138,8 +1138,8 @@ func (p *FollowResponse) Field3DeepEqual(src []*user.User) bool {
 }
 
 type FollowerRequest struct {
-	UserId int64  `thrift:"user_id,1,required" frugal:"1,required,i64" json:"user_id"`
-	Token  string `thrift:"token,2,required" frugal:"2,required,string" json:"token"`
+	UserId int64  `thrift:"user_id,1,required" frugal:"1,required,i64" json:"user_id" query:"user_id"`
+	Token  string `thrift:"token,2,required" frugal:"2,required,string" json:"token" query:"token"`
 }
 
 func NewFollowerRequest() *FollowerRequest {
@@ -1714,8 +1714,8 @@ func (p *FollowerResponse) Field3DeepEqual(src []*user.User) bool {
 }
 
 type FriendRequest struct {
-	UserId int64  `thrift:"user_id,1,required" frugal:"1,required,i64" json:"user_id"`
-	Token  string `thrift:"token,2,required" frugal:"2,required,string" json:"token"`
+	UserId int64  `thrift:"user_id,1,required" frugal:"1,required,i64" json:"user_id" query:"user_id"`
+	Token  string `thrift:"token,2,required" frugal:"2,required,string" json:"token" query:"token"`
 }
 
 func NewFriendRequest() *FriendRequest {

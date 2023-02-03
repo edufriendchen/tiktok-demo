@@ -3,9 +3,9 @@ include "user.thrift"
 namespace go relation
 
 struct ActionRequest {
-  1:required string token (vt.min_size = "1")                        // 凭证token
-  2:required string to_user_id (vt.min_size = "1")                   // 作用对象用户id
-  3:required string action_type (vt.in = "1", vt.in = "2")           // 类型
+  1:required string token (vt.min_size = "1" go.tag = 'json:"token" query:"token"')                         // 凭证token
+  2:required i64 to_user_id (go.tag = 'json:"to_user_id" query:"to_user_id"')                  // 作用对象用户id
+  3:required string action_type (vt.in = "1", vt.in = "2" go.tag = 'json:"action_type" query:"action_type"')      // 类型
 }
 
 struct ActionResponse {
@@ -14,8 +14,8 @@ struct ActionResponse {
 }
 
 struct FollowRequest {
-  1:required i64 user_id                  // 用户id
-  2:required string token                    // 凭证token
+  1:required i64 user_id (go.tag = 'json:"user_id" query:"user_id"')           // 用户id
+  2:required string token (go.tag = 'json:"token" query:"token"')            // 凭证token
 }
 
 struct FollowResponse {
@@ -25,8 +25,8 @@ struct FollowResponse {
 }
 
 struct FollowerRequest {
-  1:required i64 user_id                     // 用户id
-  2:required string token                    // 用户鉴权token
+  1:required i64 user_id (go.tag = 'json:"user_id" query:"user_id"')      // 用户id
+  2:required string token (go.tag = 'json:"token" query:"token"')     // 用户鉴权token
 }
 
 struct FollowerResponse {
@@ -36,8 +36,8 @@ struct FollowerResponse {
 }
 
 struct FriendRequest {
-  1:required i64 user_id                     // 用户id
-  2:required string token                    // 用户鉴权token
+  1:required i64 user_id (go.tag = 'json:"user_id" query:"user_id"')      // 用户id
+  2:required string token (go.tag = 'json:"token" query:"token"')     // 用户鉴权token
 }
 
 struct FriendResponse {

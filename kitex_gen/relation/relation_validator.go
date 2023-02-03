@@ -25,9 +25,6 @@ func (p *ActionRequest) IsValid() error {
 	if len(p.Token) < int(1) {
 		return fmt.Errorf("field Token min_len rule failed, current value: %d", len(p.Token))
 	}
-	if len(p.ToUserId) < int(1) {
-		return fmt.Errorf("field ToUserId min_len rule failed, current value: %d", len(p.ToUserId))
-	}
 	_src := []string{string("1"), string("2")}
 	var _exist bool
 	for _, src := range _src {

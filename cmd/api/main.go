@@ -12,6 +12,7 @@ import (
 	"github.com/edufriendchen/tiktok-demo/pkg/consts"
 	"github.com/edufriendchen/tiktok-demo/pkg/initialize"
 	"github.com/hertz-contrib/obs-opentelemetry/logging/logrus"
+	"github.com/hertz-contrib/obs-opentelemetry/tracing"
 	"github.com/hertz-contrib/registry/nacos"
 )
 
@@ -25,7 +26,7 @@ func Init() {
 func main() {
 	Init()
 	cli, _ := initialize.InitNacos()
-	//tracer, cfg := tracing.NewServerTracer()
+	tracer, cfg := tracing.NewServerTracer()
 	h := server.New(
 		server.WithHostPorts(consts.ApiServiceAddr),
 		server.WithHandleMethodNotAllowed(true),
@@ -35,9 +36,9 @@ func main() {
 			Weight:      10,
 			Tags:        nil,
 		}),
-		//tracer,
+		tracer,
 	)
-	//h.Use(tracing.ServerMiddleware(cfg))
+	h.Use(tracing.ServerMiddleware(cfg))
 	h.Use(httpvlog.Logger())
 	register(h)
 	h.Spin()

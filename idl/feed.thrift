@@ -14,8 +14,8 @@ struct Video {
 }
 
 struct FeedRequest {
-    1:optional i64 latest_time                  // 可选参数，限制返回视频的最新投稿时间戳，精确到秒，不填表示当前时间
-    2:optional string token                     // 用户登录状态下设置
+    1:optional i64 latest_time (go.tag = 'json:"latest_time" query:"latest_time"')         // 可选参数，限制返回视频的最新投稿时间戳，精确到秒，不填表示当前时间
+    2:optional string token (go.tag = 'json:"token" query:"token"')                        // 用户登录状态下设置
 }
 
 struct FeedResponse {

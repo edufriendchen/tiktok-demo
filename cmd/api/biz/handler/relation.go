@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
@@ -32,12 +33,15 @@ func RelationAction(ctx context.Context, c *app.RequestContext) {
 // MGetFollowList 注册用户操作 的上下文至 User 服务的 RPC 客户端, 并获取相应的响应.
 func MGetFollowList(ctx context.Context, c *app.RequestContext) {
 	var req relation.FollowRequest
+	fmt.Println("req", req)
+	fmt.Println("Query", c.Query("user_id"))
 	err := c.BindAndValidate(&req)
+	fmt.Println("req", req)
 	if err != nil {
 		SetResponse(c, &user.CheckUserResponse{StatusCode: errno.ParamErr.ErrCode, StatusMsg: &errno.ParamErr.ErrMsg})
 		return
 	}
-	resp, err := rpc.MGetFollowList(context.Background(), &req)
+	resp, err := rpc.MGetFollowList(ctx, &req)
 	if err != nil {
 		SetResponse(c, &user.CheckUserResponse{StatusCode: errno.ServiceErr.ErrCode, StatusMsg: &errno.ServiceErr.ErrMsg})
 		return

@@ -10,7 +10,6 @@ import (
 	"github.com/edufriendchen/tiktok-demo/pkg/consts"
 	"github.com/edufriendchen/tiktok-demo/pkg/errno"
 	"github.com/edufriendchen/tiktok-demo/pkg/initialize"
-	"github.com/kitex-contrib/obs-opentelemetry/provider"
 	"github.com/kitex-contrib/obs-opentelemetry/tracing"
 	"github.com/kitex-contrib/registry-nacos/resolver"
 )
@@ -19,11 +18,6 @@ var relationClient relationservice.Client
 
 func initRelation() {
 	cli, err := initialize.InitNacos()
-	provider.NewOpenTelemetryProvider(
-		provider.WithServiceName(consts.ApiServiceName),
-		provider.WithExportEndpoint(consts.ExportEndpoint),
-		provider.WithInsecure(),
-	)
 	c, err := relationservice.NewClient(
 		consts.RelationServiceName,
 		client.WithResolver(resolver.NewNacosResolver(cli)),

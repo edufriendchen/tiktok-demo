@@ -19,7 +19,12 @@ func (s *RelationServiceImpl) ActionRelation(ctx context.Context, req *relation.
 		resp = &relation.ActionResponse{StatusCode: errno.ParamErr.ErrCode, StatusMsg: &errno.ParamErr.ErrMsg}
 		return resp, err
 	}
-	_, err = service.NewActionRelationService(ctx, global.Neo4jDriver).ActionRelation(req)
+	claims, err := global.Jwt.ParseToken(req.Token)
+	if err != nil {
+		resp = &relation.ActionResponse{StatusCode: errno.AuthorizationFailedErr.ErrCode, StatusMsg: &errno.AuthorizationFailedErr.ErrMsg}
+		return resp, nil
+	}
+	_, err = service.NewActionRelationService(ctx, global.Neo4jDriver).ActionRelation(req, claims.Id)
 	if err != nil {
 		resp = &relation.ActionResponse{StatusCode: errno.ServiceErr.ErrCode, StatusMsg: &errno.ServiceErr.ErrMsg}
 		return resp, err
@@ -35,6 +40,12 @@ func (s *RelationServiceImpl) MGetFollowList(ctx context.Context, req *relation.
 		resp = &relation.FollowResponse{StatusCode: errno.ParamErr.ErrCode, StatusMsg: &errno.ParamErr.ErrMsg}
 		return resp, err
 	}
+	claims, err := global.Jwt.ParseToken(req.Token)
+	if err != nil {
+		resp = &relation.FollowResponse{StatusCode: errno.AuthorizationFailedErr.ErrCode, StatusMsg: &errno.AuthorizationFailedErr.ErrMsg}
+		return resp, nil
+	}
+	req.UserId = claims.Id
 	list, err := service.NewGetFollowListService(ctx, global.Neo4jDriver).GetFollowList(req)
 	if err != nil {
 		resp = &relation.FollowResponse{StatusCode: errno.ServiceErr.ErrCode, StatusMsg: &errno.ServiceErr.ErrMsg}
@@ -52,6 +63,12 @@ func (s *RelationServiceImpl) MGetFollowerList(ctx context.Context, req *relatio
 		resp = &relation.FollowerResponse{StatusCode: errno.ParamErr.ErrCode, StatusMsg: &errno.ParamErr.ErrMsg}
 		return resp, err
 	}
+	claims, err := global.Jwt.ParseToken(req.Token)
+	if err != nil {
+		resp = &relation.FollowerResponse{StatusCode: errno.AuthorizationFailedErr.ErrCode, StatusMsg: &errno.AuthorizationFailedErr.ErrMsg}
+		return resp, nil
+	}
+	req.UserId = claims.Id
 	list, err := service.NewGetFollowerListService(ctx, global.Neo4jDriver).GetFollowerList(req)
 	if err != nil {
 		resp = &relation.FollowerResponse{StatusCode: errno.ServiceErr.ErrCode, StatusMsg: &errno.ServiceErr.ErrMsg}
@@ -69,6 +86,12 @@ func (s *RelationServiceImpl) MGetFriendList(ctx context.Context, req *relation.
 		resp = &relation.FriendResponse{StatusCode: errno.ParamErr.ErrCode, StatusMsg: &errno.ParamErr.ErrMsg}
 		return resp, err
 	}
+	claims, err := global.Jwt.ParseToken(req.Token)
+	if err != nil {
+		resp = &relation.FriendResponse{StatusCode: errno.AuthorizationFailedErr.ErrCode, StatusMsg: &errno.AuthorizationFailedErr.ErrMsg}
+		return resp, nil
+	}
+	req.UserId = claims.Id
 	list, err := service.NewGetFriendListService(ctx, global.Neo4jDriver).GetFriendList(req)
 	if err != nil {
 		resp = &relation.FriendResponse{StatusCode: errno.ServiceErr.ErrCode, StatusMsg: &errno.ServiceErr.ErrMsg}

@@ -20,12 +20,12 @@ func NewGetUserService(ctx context.Context, driver neo4j.DriverWithContext) *Get
 	return &GetUserService{ctx: ctx, session: session}
 }
 
-func (s *GetUserService) GetUser(param *user.MGetUserRequest) (*user.User, error) {
+func (s *GetUserService) GetUser(param *user.MGetUserRequest, user_id int64) (*user.User, error) {
 	user, err := neo4j.ExecuteRead[*user.User](s.ctx, s.session, func(tx neo4j.ManagedTransaction) (*user.User, error) {
 		result, err := tx.Run(s.ctx, "MATCH (n:User) WHERE id(n) = $toUserId MATCH (n1:User) WHERE id(n1) = $userId RETURN n, CASE WHEN (n1)-[:follow]->(n) THEN true ELSE false END AS result",
 			map[string]any{
-				"toUserId": 0,
-				"userId":   param.UserId,
+				"toUserId": param.UserId,
+				"userId":   user_id,
 			})
 		if err != nil {
 			return nil, err
@@ -47,6 +47,10 @@ func (s *GetUserService) GetUser(param *user.MGetUserRequest) (*user.User, error
 		if err != nil {
 			return nil, err
 		}
+		avatar, err := neo4j.GetProperty[string](itemNode, "nickname")
+		if err != nil {
+			return nil, err
+		}
 		follow_count, err := neo4j.GetProperty[int64](itemNode, "follow_count")
 		if err != nil {
 			return nil, err
@@ -59,7 +63,7 @@ func (s *GetUserService) GetUser(param *user.MGetUserRequest) (*user.User, error
 		if err != nil {
 			return nil, err
 		}
-		return &user.User{Id: id, Name: name, FollowCount: &follow_count, FollowerCount: &follower_count, IsFollow: IsFollow}, nil
+		return &user.User{Id: id, Name: name, Avatar: avatar, FollowCount: &follow_count, FollowerCount: &follower_count, IsFollow: IsFollow}, nil
 	})
 	return user, err
 }

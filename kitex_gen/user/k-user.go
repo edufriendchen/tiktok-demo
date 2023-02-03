@@ -31,6 +31,7 @@ func (p *User) FastRead(buf []byte) (int, error) {
 	var fieldId int16
 	var issetId bool = false
 	var issetName bool = false
+	var issetAvatar bool = false
 	var issetIsFollow bool = false
 	_, l, err = bthrift.Binary.ReadStructBegin(buf)
 	offset += l
@@ -79,12 +80,13 @@ func (p *User) FastRead(buf []byte) (int, error) {
 				}
 			}
 		case 3:
-			if fieldTypeId == thrift.I64 {
+			if fieldTypeId == thrift.STRING {
 				l, err = p.FastReadField3(buf[offset:])
 				offset += l
 				if err != nil {
 					goto ReadFieldError
 				}
+				issetAvatar = true
 			} else {
 				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
 				offset += l
@@ -107,8 +109,22 @@ func (p *User) FastRead(buf []byte) (int, error) {
 				}
 			}
 		case 5:
-			if fieldTypeId == thrift.BOOL {
+			if fieldTypeId == thrift.I64 {
 				l, err = p.FastReadField5(buf[offset:])
+				offset += l
+				if err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				l, err = bthrift.Binary.Skip(buf[offset:], fieldTypeId)
+				offset += l
+				if err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 6:
+			if fieldTypeId == thrift.BOOL {
+				l, err = p.FastReadField6(buf[offset:])
 				offset += l
 				if err != nil {
 					goto ReadFieldError
@@ -151,8 +167,13 @@ func (p *User) FastRead(buf []byte) (int, error) {
 		goto RequiredFieldNotSetError
 	}
 
+	if !issetAvatar {
+		fieldId = 3
+		goto RequiredFieldNotSetError
+	}
+
 	if !issetIsFollow {
-		fieldId = 5
+		fieldId = 6
 		goto RequiredFieldNotSetError
 	}
 	return offset, nil
@@ -203,11 +224,12 @@ func (p *User) FastReadField2(buf []byte) (int, error) {
 func (p *User) FastReadField3(buf []byte) (int, error) {
 	offset := 0
 
-	if v, l, err := bthrift.Binary.ReadI64(buf[offset:]); err != nil {
+	if v, l, err := bthrift.Binary.ReadString(buf[offset:]); err != nil {
 		return offset, err
 	} else {
 		offset += l
-		p.FollowCount = &v
+
+		p.Avatar = v
 
 	}
 	return offset, nil
@@ -220,13 +242,26 @@ func (p *User) FastReadField4(buf []byte) (int, error) {
 		return offset, err
 	} else {
 		offset += l
-		p.FollowerCount = &v
+		p.FollowCount = &v
 
 	}
 	return offset, nil
 }
 
 func (p *User) FastReadField5(buf []byte) (int, error) {
+	offset := 0
+
+	if v, l, err := bthrift.Binary.ReadI64(buf[offset:]); err != nil {
+		return offset, err
+	} else {
+		offset += l
+		p.FollowerCount = &v
+
+	}
+	return offset, nil
+}
+
+func (p *User) FastReadField6(buf []byte) (int, error) {
 	offset := 0
 
 	if v, l, err := bthrift.Binary.ReadBool(buf[offset:]); err != nil {
@@ -250,10 +285,11 @@ func (p *User) FastWriteNocopy(buf []byte, binaryWriter bthrift.BinaryWriter) in
 	offset += bthrift.Binary.WriteStructBegin(buf[offset:], "User")
 	if p != nil {
 		offset += p.fastWriteField1(buf[offset:], binaryWriter)
-		offset += p.fastWriteField3(buf[offset:], binaryWriter)
 		offset += p.fastWriteField4(buf[offset:], binaryWriter)
 		offset += p.fastWriteField5(buf[offset:], binaryWriter)
+		offset += p.fastWriteField6(buf[offset:], binaryWriter)
 		offset += p.fastWriteField2(buf[offset:], binaryWriter)
+		offset += p.fastWriteField3(buf[offset:], binaryWriter)
 	}
 	offset += bthrift.Binary.WriteFieldStop(buf[offset:])
 	offset += bthrift.Binary.WriteStructEnd(buf[offset:])
@@ -269,6 +305,7 @@ func (p *User) BLength() int {
 		l += p.field3Length()
 		l += p.field4Length()
 		l += p.field5Length()
+		l += p.field6Length()
 	}
 	l += bthrift.Binary.FieldStopLength()
 	l += bthrift.Binary.StructEndLength()
@@ -295,20 +332,18 @@ func (p *User) fastWriteField2(buf []byte, binaryWriter bthrift.BinaryWriter) in
 
 func (p *User) fastWriteField3(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	if p.IsSetFollowCount() {
-		offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "follow_count", thrift.I64, 3)
-		offset += bthrift.Binary.WriteI64(buf[offset:], *p.FollowCount)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "avatar", thrift.STRING, 3)
+	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.Avatar)
 
-		offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
-	}
+	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
 }
 
 func (p *User) fastWriteField4(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	if p.IsSetFollowerCount() {
-		offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "follower_count", thrift.I64, 4)
-		offset += bthrift.Binary.WriteI64(buf[offset:], *p.FollowerCount)
+	if p.IsSetFollowCount() {
+		offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "follow_count", thrift.I64, 4)
+		offset += bthrift.Binary.WriteI64(buf[offset:], *p.FollowCount)
 
 		offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	}
@@ -317,7 +352,18 @@ func (p *User) fastWriteField4(buf []byte, binaryWriter bthrift.BinaryWriter) in
 
 func (p *User) fastWriteField5(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "is_follow", thrift.BOOL, 5)
+	if p.IsSetFollowerCount() {
+		offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "follower_count", thrift.I64, 5)
+		offset += bthrift.Binary.WriteI64(buf[offset:], *p.FollowerCount)
+
+		offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
+	}
+	return offset
+}
+
+func (p *User) fastWriteField6(buf []byte, binaryWriter bthrift.BinaryWriter) int {
+	offset := 0
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "is_follow", thrift.BOOL, 6)
 	offset += bthrift.Binary.WriteBool(buf[offset:], p.IsFollow)
 
 	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
@@ -344,20 +390,18 @@ func (p *User) field2Length() int {
 
 func (p *User) field3Length() int {
 	l := 0
-	if p.IsSetFollowCount() {
-		l += bthrift.Binary.FieldBeginLength("follow_count", thrift.I64, 3)
-		l += bthrift.Binary.I64Length(*p.FollowCount)
+	l += bthrift.Binary.FieldBeginLength("avatar", thrift.STRING, 3)
+	l += bthrift.Binary.StringLengthNocopy(p.Avatar)
 
-		l += bthrift.Binary.FieldEndLength()
-	}
+	l += bthrift.Binary.FieldEndLength()
 	return l
 }
 
 func (p *User) field4Length() int {
 	l := 0
-	if p.IsSetFollowerCount() {
-		l += bthrift.Binary.FieldBeginLength("follower_count", thrift.I64, 4)
-		l += bthrift.Binary.I64Length(*p.FollowerCount)
+	if p.IsSetFollowCount() {
+		l += bthrift.Binary.FieldBeginLength("follow_count", thrift.I64, 4)
+		l += bthrift.Binary.I64Length(*p.FollowCount)
 
 		l += bthrift.Binary.FieldEndLength()
 	}
@@ -366,7 +410,18 @@ func (p *User) field4Length() int {
 
 func (p *User) field5Length() int {
 	l := 0
-	l += bthrift.Binary.FieldBeginLength("is_follow", thrift.BOOL, 5)
+	if p.IsSetFollowerCount() {
+		l += bthrift.Binary.FieldBeginLength("follower_count", thrift.I64, 5)
+		l += bthrift.Binary.I64Length(*p.FollowerCount)
+
+		l += bthrift.Binary.FieldEndLength()
+	}
+	return l
+}
+
+func (p *User) field6Length() int {
+	l := 0
+	l += bthrift.Binary.FieldBeginLength("is_follow", thrift.BOOL, 6)
 	l += bthrift.Binary.BoolLength(p.IsFollow)
 
 	l += bthrift.Binary.FieldEndLength()

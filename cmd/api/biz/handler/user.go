@@ -58,6 +58,7 @@ func MGetUserInfo(ctx context.Context, c *app.RequestContext) {
 		SetResponse(c, &user.MGetUserResponse{StatusCode: errno.ServiceErr.ErrCode, StatusMsg: &errno.ServiceErr.ErrMsg})
 		return
 	}
+	resp.User.Avatar = "https://img1.baidu.com/it/u=1459539381,1684299919&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1675530000&t=264b8cfbd62ce23ee0d0a557091cc72d"
 	SetResponse(c, resp)
 	return
 }

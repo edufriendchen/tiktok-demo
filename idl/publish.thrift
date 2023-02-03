@@ -3,9 +3,9 @@ include "feed.thrift"
 namespace go publish
 
 struct ActionRequest {
-    1:required bytes data                                                     // 视频数据
-    2:required string token                                                   // 用户鉴权token
-    3:required string title (vt.in = "1", vt.in = "2")                        // 视频标题
+    1:required bytes data (go.tag = 'json:"data" query:"data"')                                                    // 视频数据
+    2:required string token (go.tag = 'json:"token" query:"token"')                                                // 用户鉴权token
+    3:required string title (vt.in = "1", vt.in = "2" go.tag = 'json:"title" query:"title"')                       // 视频标题
 }
 
 struct ActionResponse {
@@ -14,8 +14,8 @@ struct ActionResponse {
 }
 
 struct PublishRequest {
-    1:required string user_id                // 用户id
-    2:required string token                  // 凭证token
+    1:required i64 user_id (go.tag = 'json:"user_id" query:"user_id"')                // 用户id
+    2:required string token (go.tag = 'json:"token" query:"token"')                   // 凭证token
 }
 
 struct PublishResponse {

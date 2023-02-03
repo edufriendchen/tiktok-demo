@@ -10,11 +10,11 @@ struct Comment {
 }
 
 struct ActionRequest {
-    1:required string token                                                   // 用户鉴权token
-    2:required string video_id                                                // 视频id
-    3:required string action_type (vt.in = "1", vt.in = "2")                  // 操作类型（1-发布评论，2-删除评论）
-    4:optional string comment_text                                            // 用户填写的评论内容，在action_type=1的时候使用
-    5:optional string comment_id                                              // 要删除的评论id，在action_type=2的时候使用
+    1:required string token (go.tag = 'json:"token" query:"token"')                                                   // 用户鉴权token
+    2:required string video_id (go.tag = 'json:"video_id" query:"video_id"')                                          // 视频id
+    3:required string action_type (vt.in = "1", vt.in = "2" go.tag = 'json:"action_type" query:"action_type"') )      // 操作类型（1-发布评论，2-删除评论）
+    4:optional string comment_text (go.tag = 'json:"comment_text" query:"comment_text"')                              // 用户填写的评论内容，在action_type=1的时候使用
+    5:optional string comment_id (go.tag = 'json:"comment_id" query:"comment_id"')                                    // 要删除的评论id，在action_type=2的时候使用
 }
 
 struct ActionResponse {
@@ -24,8 +24,8 @@ struct ActionResponse {
 }
 
 struct CommentRequest {
-    1:required string user_id                // 用户鉴权token
-    2:required string video_id               // 视频id
+    1:required string user_id (go.tag = 'json:"user_id" query:"user_id"')                  // 用户鉴权token
+    2:required string video_id (go.tag = 'json:"video_id" query:"video_id"')               // 视频id
 }
 
 struct CommentResponse {

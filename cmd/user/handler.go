@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/edufriendchen/tiktok-demo/pkg/errno"
 	"github.com/edufriendchen/tiktok-demo/pkg/global"
@@ -16,7 +15,7 @@ import (
 // UserServiceImpl implements the last service interface defined in the IDL.
 type UserServiceImpl struct{}
 
-// Register implements the UserServiceImpl interface.
+// CreateUser implements the UserServiceImpl interface.
 func (s *UserServiceImpl) CreateUser(ctx context.Context, req *user.CreateUserRequest) (resp *user.CreateUserResponse, err error) {
 	resp = new(user.CreateUserResponse)
 	if err = req.IsValid(); err != nil {
@@ -28,11 +27,14 @@ func (s *UserServiceImpl) CreateUser(ctx context.Context, req *user.CreateUserRe
 		resp = &user.CreateUserResponse{StatusCode: errno.ServiceErr.ErrCode, StatusMsg: &errno.ServiceErr.ErrMsg}
 		return resp, err
 	}
-	resp = &user.CreateUserResponse{StatusCode: errno.Success.ErrCode, StatusMsg: &errno.Success.ErrMsg, UserId: userid, Token: ""}
+	token, err := global.Jwt.CreateToken(jwt.CustomClaims{
+		Id: userid,
+	})
+	resp = &user.CreateUserResponse{StatusCode: errno.Success.ErrCode, StatusMsg: &errno.Success.ErrMsg, UserId: userid, Token: token}
 	return resp, nil
 }
 
-// Login implements the UserServiceImpl interface.
+// CheckUser implements the UserServiceImpl interface.
 func (s *UserServiceImpl) CheckUser(ctx context.Context, req *user.CheckUserRequest) (resp *user.CheckUserResponse, err error) {
 	resp = new(user.CheckUserResponse)
 	if err = req.IsValid(); err != nil {
@@ -51,7 +53,7 @@ func (s *UserServiceImpl) CheckUser(ctx context.Context, req *user.CheckUserRequ
 	return resp, nil
 }
 
-// GetUserById implements the UserServiceImpl interface.
+// MGetUser implements the UserServiceImpl interface.
 func (s *UserServiceImpl) MGetUser(ctx context.Context, req *user.MGetUserRequest) (resp *user.MGetUserResponse, err error) {
 	resp = new(user.MGetUserResponse)
 	if err = req.IsValid(); err != nil {
@@ -63,8 +65,10 @@ func (s *UserServiceImpl) MGetUser(ctx context.Context, req *user.MGetUserReques
 		resp = &user.MGetUserResponse{StatusCode: errno.AuthorizationFailedErr.ErrCode, StatusMsg: &errno.AuthorizationFailedErr.ErrMsg}
 		return resp, nil
 	}
-	fmt.Println("token -> id", claims)
-	userInfo, err := service.NewGetUserService(ctx, global.Neo4jDriver).GetUser(req)
+	if req.UserId == 0 {
+		req.UserId = claims.Id
+	}
+	userInfo, err := service.NewGetUserService(ctx, global.Neo4jDriver).GetUser(req, claims.Id)
 	if err != nil {
 		resp = &user.MGetUserResponse{StatusCode: errno.ParamErr.ErrCode, StatusMsg: &errno.ParamErr.ErrMsg}
 		return resp, err

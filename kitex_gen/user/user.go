@@ -12,9 +12,10 @@ import (
 type User struct {
 	Id            int64  `thrift:"id,1,required" frugal:"1,required,i64" json:"id"`
 	Name          string `thrift:"name,2,required" frugal:"2,required,string" json:"name"`
-	FollowCount   *int64 `thrift:"follow_count,3,optional" frugal:"3,optional,i64" json:"follow_count,omitempty"`
-	FollowerCount *int64 `thrift:"follower_count,4,optional" frugal:"4,optional,i64" json:"follower_count,omitempty"`
-	IsFollow      bool   `thrift:"is_follow,5,required" frugal:"5,required,bool" json:"is_follow"`
+	Avatar        string `thrift:"avatar,3,required" frugal:"3,required,string" json:"avatar"`
+	FollowCount   *int64 `thrift:"follow_count,4,optional" frugal:"4,optional,i64" json:"follow_count,omitempty"`
+	FollowerCount *int64 `thrift:"follower_count,5,optional" frugal:"5,optional,i64" json:"follower_count,omitempty"`
+	IsFollow      bool   `thrift:"is_follow,6,required" frugal:"6,required,bool" json:"is_follow"`
 }
 
 func NewUser() *User {
@@ -31,6 +32,10 @@ func (p *User) GetId() (v int64) {
 
 func (p *User) GetName() (v string) {
 	return p.Name
+}
+
+func (p *User) GetAvatar() (v string) {
+	return p.Avatar
 }
 
 var User_FollowCount_DEFAULT int64
@@ -60,6 +65,9 @@ func (p *User) SetId(val int64) {
 func (p *User) SetName(val string) {
 	p.Name = val
 }
+func (p *User) SetAvatar(val string) {
+	p.Avatar = val
+}
 func (p *User) SetFollowCount(val *int64) {
 	p.FollowCount = val
 }
@@ -73,9 +81,10 @@ func (p *User) SetIsFollow(val bool) {
 var fieldIDToName_User = map[int16]string{
 	1: "id",
 	2: "name",
-	3: "follow_count",
-	4: "follower_count",
-	5: "is_follow",
+	3: "avatar",
+	4: "follow_count",
+	5: "follower_count",
+	6: "is_follow",
 }
 
 func (p *User) IsSetFollowCount() bool {
@@ -92,6 +101,7 @@ func (p *User) Read(iprot thrift.TProtocol) (err error) {
 	var fieldId int16
 	var issetId bool = false
 	var issetName bool = false
+	var issetAvatar bool = false
 	var issetIsFollow bool = false
 
 	if _, err = iprot.ReadStructBegin(); err != nil {
@@ -131,10 +141,11 @@ func (p *User) Read(iprot thrift.TProtocol) (err error) {
 				}
 			}
 		case 3:
-			if fieldTypeId == thrift.I64 {
+			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField3(iprot); err != nil {
 					goto ReadFieldError
 				}
+				issetAvatar = true
 			} else {
 				if err = iprot.Skip(fieldTypeId); err != nil {
 					goto SkipFieldError
@@ -151,8 +162,18 @@ func (p *User) Read(iprot thrift.TProtocol) (err error) {
 				}
 			}
 		case 5:
-			if fieldTypeId == thrift.BOOL {
+			if fieldTypeId == thrift.I64 {
 				if err = p.ReadField5(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 6:
+			if fieldTypeId == thrift.BOOL {
+				if err = p.ReadField6(iprot); err != nil {
 					goto ReadFieldError
 				}
 				issetIsFollow = true
@@ -185,8 +206,13 @@ func (p *User) Read(iprot thrift.TProtocol) (err error) {
 		goto RequiredFieldNotSetError
 	}
 
+	if !issetAvatar {
+		fieldId = 3
+		goto RequiredFieldNotSetError
+	}
+
 	if !issetIsFollow {
-		fieldId = 5
+		fieldId = 6
 		goto RequiredFieldNotSetError
 	}
 	return nil
@@ -226,10 +252,10 @@ func (p *User) ReadField2(iprot thrift.TProtocol) error {
 }
 
 func (p *User) ReadField3(iprot thrift.TProtocol) error {
-	if v, err := iprot.ReadI64(); err != nil {
+	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.FollowCount = &v
+		p.Avatar = v
 	}
 	return nil
 }
@@ -238,12 +264,21 @@ func (p *User) ReadField4(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadI64(); err != nil {
 		return err
 	} else {
-		p.FollowerCount = &v
+		p.FollowCount = &v
 	}
 	return nil
 }
 
 func (p *User) ReadField5(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadI64(); err != nil {
+		return err
+	} else {
+		p.FollowerCount = &v
+	}
+	return nil
+}
+
+func (p *User) ReadField6(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadBool(); err != nil {
 		return err
 	} else {
@@ -276,6 +311,10 @@ func (p *User) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField5(oprot); err != nil {
 			fieldId = 5
+			goto WriteFieldError
+		}
+		if err = p.writeField6(oprot); err != nil {
+			fieldId = 6
 			goto WriteFieldError
 		}
 
@@ -332,16 +371,14 @@ WriteFieldEndError:
 }
 
 func (p *User) writeField3(oprot thrift.TProtocol) (err error) {
-	if p.IsSetFollowCount() {
-		if err = oprot.WriteFieldBegin("follow_count", thrift.I64, 3); err != nil {
-			goto WriteFieldBeginError
-		}
-		if err := oprot.WriteI64(*p.FollowCount); err != nil {
-			return err
-		}
-		if err = oprot.WriteFieldEnd(); err != nil {
-			goto WriteFieldEndError
-		}
+	if err = oprot.WriteFieldBegin("avatar", thrift.STRING, 3); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.Avatar); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
 	}
 	return nil
 WriteFieldBeginError:
@@ -351,11 +388,11 @@ WriteFieldEndError:
 }
 
 func (p *User) writeField4(oprot thrift.TProtocol) (err error) {
-	if p.IsSetFollowerCount() {
-		if err = oprot.WriteFieldBegin("follower_count", thrift.I64, 4); err != nil {
+	if p.IsSetFollowCount() {
+		if err = oprot.WriteFieldBegin("follow_count", thrift.I64, 4); err != nil {
 			goto WriteFieldBeginError
 		}
-		if err := oprot.WriteI64(*p.FollowerCount); err != nil {
+		if err := oprot.WriteI64(*p.FollowCount); err != nil {
 			return err
 		}
 		if err = oprot.WriteFieldEnd(); err != nil {
@@ -370,7 +407,26 @@ WriteFieldEndError:
 }
 
 func (p *User) writeField5(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("is_follow", thrift.BOOL, 5); err != nil {
+	if p.IsSetFollowerCount() {
+		if err = oprot.WriteFieldBegin("follower_count", thrift.I64, 5); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteI64(*p.FollowerCount); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 5 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 5 end error: ", p), err)
+}
+
+func (p *User) writeField6(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("is_follow", thrift.BOOL, 6); err != nil {
 		goto WriteFieldBeginError
 	}
 	if err := oprot.WriteBool(p.IsFollow); err != nil {
@@ -381,9 +437,9 @@ func (p *User) writeField5(oprot thrift.TProtocol) (err error) {
 	}
 	return nil
 WriteFieldBeginError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 5 begin error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 6 begin error: ", p), err)
 WriteFieldEndError:
-	return thrift.PrependError(fmt.Sprintf("%T write field 5 end error: ", p), err)
+	return thrift.PrependError(fmt.Sprintf("%T write field 6 end error: ", p), err)
 }
 
 func (p *User) String() string {
@@ -405,13 +461,16 @@ func (p *User) DeepEqual(ano *User) bool {
 	if !p.Field2DeepEqual(ano.Name) {
 		return false
 	}
-	if !p.Field3DeepEqual(ano.FollowCount) {
+	if !p.Field3DeepEqual(ano.Avatar) {
 		return false
 	}
-	if !p.Field4DeepEqual(ano.FollowerCount) {
+	if !p.Field4DeepEqual(ano.FollowCount) {
 		return false
 	}
-	if !p.Field5DeepEqual(ano.IsFollow) {
+	if !p.Field5DeepEqual(ano.FollowerCount) {
+		return false
+	}
+	if !p.Field6DeepEqual(ano.IsFollow) {
 		return false
 	}
 	return true
@@ -431,7 +490,14 @@ func (p *User) Field2DeepEqual(src string) bool {
 	}
 	return true
 }
-func (p *User) Field3DeepEqual(src *int64) bool {
+func (p *User) Field3DeepEqual(src string) bool {
+
+	if strings.Compare(p.Avatar, src) != 0 {
+		return false
+	}
+	return true
+}
+func (p *User) Field4DeepEqual(src *int64) bool {
 
 	if p.FollowCount == src {
 		return true
@@ -443,7 +509,7 @@ func (p *User) Field3DeepEqual(src *int64) bool {
 	}
 	return true
 }
-func (p *User) Field4DeepEqual(src *int64) bool {
+func (p *User) Field5DeepEqual(src *int64) bool {
 
 	if p.FollowerCount == src {
 		return true
@@ -455,7 +521,7 @@ func (p *User) Field4DeepEqual(src *int64) bool {
 	}
 	return true
 }
-func (p *User) Field5DeepEqual(src bool) bool {
+func (p *User) Field6DeepEqual(src bool) bool {
 
 	if p.IsFollow != src {
 		return false
@@ -464,8 +530,8 @@ func (p *User) Field5DeepEqual(src bool) bool {
 }
 
 type CreateUserRequest struct {
-	Username string `thrift:"username,1,required" frugal:"1,required,string" json:"username"`
-	Password string `thrift:"password,2,required" frugal:"2,required,string" json:"password"`
+	Username string `thrift:"username,1,required" frugal:"1,required,string" json:"username" query:"username"`
+	Password string `thrift:"password,2,required" frugal:"2,required,string" json:"password" query:"password"`
 }
 
 func NewCreateUserRequest() *CreateUserRequest {
@@ -1081,8 +1147,8 @@ func (p *CreateUserResponse) Field4DeepEqual(src string) bool {
 }
 
 type CheckUserRequest struct {
-	Username string `thrift:"username,1" frugal:"1,default,string" json:"username"`
-	Password string `thrift:"password,2" frugal:"2,default,string" json:"password"`
+	Username string `thrift:"username,1" frugal:"1,default,string" json:"username" query:"username"`
+	Password string `thrift:"password,2" frugal:"2,default,string" json:"password" query:"password"`
 }
 
 func NewCheckUserRequest() *CheckUserRequest {
@@ -1683,8 +1749,8 @@ func (p *CheckUserResponse) Field4DeepEqual(src string) bool {
 }
 
 type MGetUserRequest struct {
-	UserId int64  `thrift:"user_id,1,required" frugal:"1,required,i64" json:"user_id"`
-	Token  string `thrift:"token,2,required" frugal:"2,required,string" json:"token"`
+	UserId int64  `thrift:"user_id,1,required" frugal:"1,required,i64" json:"user_id" query:"user_id"`
+	Token  string `thrift:"token,2,required" frugal:"2,required,string" json:"token" query:"token"`
 }
 
 func NewMGetUserRequest() *MGetUserRequest {
