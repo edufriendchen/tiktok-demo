@@ -18,6 +18,7 @@ import (
 )
 
 func Init() {
+	initialize.InitDB()
 	initialize.InitNeo4j()
 	initialize.InitJWT()
 	klog.SetLogger(logrus.NewLogger())

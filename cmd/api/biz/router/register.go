@@ -28,4 +28,30 @@ func GeneratedRegister(r *server.Hertz) {
 			_relation.GET("/follower/list", handler.MGetFollowerList)
 			_relation.GET("/friend/list", handler.MGetFriendList)
 		}
+
+		{
+			_relation := root.Group("/message")
+			_relation.POST("/action",  handler.ActionMessage)
+			_relation.GET("/chat",  handler.MGetMessageList)
+		}
+
+
+		{
+			_relation := root.Group("/publish")
+			_relation.POST("/action",  handler.PublishAction)
+			_relation.GET("/list",  handler.MGetPublishList)
+		}
+
+
+		{
+			_relation := root.Group("/feed")
+			_relation.GET("/",  handler.MGetFeedList)
+		}
+
+		{
+			_relation := root.Group("/favorite")
+			_relation.POST("/action/",  handler.ActionFavorite)
+			_relation.GET("/list",  handler.MGetFavoriteList)
+		}
+		
 }

@@ -25,10 +25,10 @@ func (p *ActionRequest) IsValid() error {
 	if len(p.Token) < int(1) {
 		return fmt.Errorf("field Token min_len rule failed, current value: %d", len(p.Token))
 	}
-	_src := []string{string("1"), string("2")}
+	_src := []int8{int8(1), int8(2)}
 	var _exist bool
 	for _, src := range _src {
-		if p.ActionType == src {
+		if p.ActionType == int8(src) {
 			_exist = true
 			break
 		}

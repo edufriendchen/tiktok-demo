@@ -8,7 +8,6 @@ import (
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"github.com/edufriendchen/tiktok-demo/cmd/api/biz/rpc"
 	"github.com/edufriendchen/tiktok-demo/kitex_gen/relation"
-	"github.com/edufriendchen/tiktok-demo/kitex_gen/user"
 	"github.com/edufriendchen/tiktok-demo/pkg/errno"
 )
 
@@ -17,13 +16,13 @@ func RelationAction(ctx context.Context, c *app.RequestContext) {
 	var req relation.ActionRequest
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		c.JSON(consts.StatusOK, &user.CreateUserResponse{StatusCode: errno.ParamErr.ErrCode, StatusMsg: &errno.ParamErr.ErrMsg})
+		c.JSON(consts.StatusOK, &relation.ActionResponse{StatusCode: errno.ParamErr.ErrCode, StatusMsg: &errno.ParamErr.ErrMsg})
 		return
 	}
 	resp, err := rpc.ActionRelation(ctx, &req)
 	if err != nil {
 		Err := errno.ConvertErr(err)
-		c.JSON(consts.StatusOK, &user.CreateUserResponse{StatusCode: Err.ErrCode, StatusMsg: &Err.ErrMsg})
+		c.JSON(consts.StatusOK, &relation.ActionResponse{StatusCode: Err.ErrCode, StatusMsg: &Err.ErrMsg})
 		return
 	}
 	SetResponse(c, resp)
@@ -38,12 +37,12 @@ func MGetFollowList(ctx context.Context, c *app.RequestContext) {
 	err := c.BindAndValidate(&req)
 	fmt.Println("req", req)
 	if err != nil {
-		SetResponse(c, &user.CheckUserResponse{StatusCode: errno.ParamErr.ErrCode, StatusMsg: &errno.ParamErr.ErrMsg})
+		SetResponse(c, &relation.FollowResponse{StatusCode: errno.ParamErr.ErrCode, StatusMsg: &errno.ParamErr.ErrMsg})
 		return
 	}
 	resp, err := rpc.MGetFollowList(ctx, &req)
 	if err != nil {
-		SetResponse(c, &user.CheckUserResponse{StatusCode: errno.ServiceErr.ErrCode, StatusMsg: &errno.ServiceErr.ErrMsg})
+		SetResponse(c, &relation.FollowResponse{StatusCode: errno.ServiceErr.ErrCode, StatusMsg: &errno.ServiceErr.ErrMsg})
 		return
 	}
 	SetResponse(c, resp)
@@ -55,12 +54,12 @@ func MGetFollowerList(ctx context.Context, c *app.RequestContext) {
 	var req relation.FollowerRequest
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		SetResponse(c, &user.MGetUserResponse{StatusCode: errno.ParamErr.ErrCode, StatusMsg: &errno.ParamErr.ErrMsg})
+		SetResponse(c, &relation.FollowerResponse{StatusCode: errno.ParamErr.ErrCode, StatusMsg: &errno.ParamErr.ErrMsg})
 		return
 	}
 	resp, err := rpc.MGetFollowerList(ctx, &req)
 	if err != nil {
-		SetResponse(c, &user.MGetUserResponse{StatusCode: errno.ServiceErr.ErrCode, StatusMsg: &errno.ServiceErr.ErrMsg})
+		SetResponse(c, &relation.FollowerResponse{StatusCode: errno.ServiceErr.ErrCode, StatusMsg: &errno.ServiceErr.ErrMsg})
 		return
 	}
 	SetResponse(c, resp)
@@ -72,12 +71,12 @@ func MGetFriendList(ctx context.Context, c *app.RequestContext) {
 	var req relation.FriendRequest
 	err := c.BindAndValidate(&req)
 	if err != nil {
-		SetResponse(c, &user.MGetUserResponse{StatusCode: errno.ParamErr.ErrCode, StatusMsg: &errno.ParamErr.ErrMsg})
+		SetResponse(c, &relation.FriendResponse{StatusCode: errno.ParamErr.ErrCode, StatusMsg: &errno.ParamErr.ErrMsg})
 		return
 	}
 	resp, err := rpc.MGetFriendList(ctx, &req)
 	if err != nil {
-		SetResponse(c, &user.MGetUserResponse{StatusCode: errno.ServiceErr.ErrCode, StatusMsg: &errno.ServiceErr.ErrMsg})
+		SetResponse(c, &relation.FriendResponse{StatusCode: errno.ServiceErr.ErrCode, StatusMsg: &errno.ServiceErr.ErrMsg})
 		return
 	}
 	SetResponse(c, resp)

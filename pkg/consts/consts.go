@@ -26,7 +26,7 @@ const (
 	IdentityKey     = "id"
 	Total           = "total"
 	Notes           = "notes"
-	MySQLDefaultDSN = "gorm:gorm@tcp(localhost:3306)/gorm?charset=utf8&parseTime=True&loc=Local"
+	MySQLDefaultDSN = "root:Zty20001011!@tcp(localhost:3306)/tiktok?charset=utf8&parseTime=True&loc=Local"
 	TCP             = "tcp"
 	ExportEndpoint  = "localhost:14268"
 	DefaultLimit    = 10
@@ -37,4 +37,13 @@ const (
 	NacosPoint      = 8848
 	NacosLogDir     = ""
 	JWTSecretKey    = "chen"
+	Limit           = 35
+)
+
+const (
+	MinioEndpoint        = "http://portal.qiniu.com/cdn/domain/rpstobjks.hb-bkt.clouddn.com"
+	MinioAccessKeyId     = "GWh-FLBRPXOY59v_bKHMQ3At7fX7sZgIs5kMcrOB"
+	MinioSecretAccessKey = "pkgIULQ4BRdhuocutEzIhPDkTJfL5TLVFAgjBYIf"
+	MinioUseSSL          = true
+	MinioVideoBucketName = "friendchen"
 )

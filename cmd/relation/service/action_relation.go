@@ -24,15 +24,15 @@ func (s *ActionRelationService) ActionRelation(req *relation.ActionRequest, user
 	if err != nil {
 		return false, err
 	}
-	if (req.ActionType == "1" && is) || (req.ActionType == "2" && !is) {
+	if (req.ActionType == 1 && is) || (req.ActionType == 2 && !is) {
 		return true, nil
 	}
-	if req.ActionType == "1" && !is {
+	if req.ActionType == 1 && !is {
 		if _, err := doFollow(s.ctx, s.session, user_id, req.ToUserId); err != nil {
 			return false, err
 		}
 	}
-	if req.ActionType == "2" && is {
+	if req.ActionType == 2 && is {
 		if _, err := unFollow(s.ctx, s.session, user_id, req.ToUserId); err != nil {
 			return false, err
 		}

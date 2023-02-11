@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/edufriendchen/tiktok-demo/kitex_gen/user"
 
@@ -35,11 +36,12 @@ func (s *GetFriendListService) GetFriendList(req *relation.FriendRequest) ([]*us
 			return nil, err
 		}
 		for i := 0; i < len(record); i++ {
-			value, ok := record[i].Get("to")
+			value, ok := record[i].Get("v")
+			fmt.Println("V:", value)
 			if ok {
 				itemNode := value.(neo4j.Node)
 				id := itemNode.GetId()
-				name, err := neo4j.GetProperty[string](itemNode, "nickname")
+				name, err := neo4j.GetProperty[string](itemNode, "u.nickname")
 				if err != nil {
 					return nil, err
 				}
